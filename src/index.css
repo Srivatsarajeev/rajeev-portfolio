@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base styling */
+body {
+  @apply bg-black text-white antialiased;
+}
+
+/* Optional: nicer selection color */
+::selection {
+  background: #9333ea; /* purple */
+  color: white;
+}
+
+/* Optional: custom scrollbar (premium feel) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
