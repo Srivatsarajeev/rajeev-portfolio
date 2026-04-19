@@ -11,6 +11,7 @@ body {
   padding: 50px 20px;
 }
 
+/* HERO */
 .hero {
   display: flex;
   gap: 20px;
@@ -24,8 +25,8 @@ body {
 }
 
 .name {
-  font-family: 'Clash Display', sans-serif;
   font-size: 34px;
+  font-family: 'Clash Display', sans-serif;
 }
 
 .subtitle {
@@ -51,6 +52,14 @@ body {
 
 .icons a:hover {
   color: white;
+}
+
+/* RESUME */
+.resume {
+  display: inline-block;
+  margin-top: 10px;
+  color: white;
+  text-decoration: underline;
 }
 
 /* CARD */

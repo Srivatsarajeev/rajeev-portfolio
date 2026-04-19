@@ -2,8 +2,8 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope } from "react-icons/fa";
 
-/* FIXED IMAGE LOADER (VERCEL SAFE) */
-const images = import.meta.glob("/photos/*.{jpg,jpeg,png,JPG,PNG}", {
+/* 🔥 AUTO LOAD PHOTOS FROM PUBLIC */
+const images = import.meta.glob("/public/photos/*", {
   eager: true,
   as: "url",
 });
@@ -21,7 +21,7 @@ export default function App() {
 
   /* VISITOR COUNT */
   useEffect(() => {
-    fetch("https://api.countapi.xyz/hit/rajeev-final-portfolio/visits")
+    fetch("https://api.countapi.xyz/hit/rajeev-portfolio-final/visits")
       .then((res) => res.json())
       .then((data) => setVisits(data.value));
   }, []);
@@ -50,13 +50,12 @@ export default function App() {
 
           {/* ICONS */}
           <div className="icons">
-            <a href="https://github.com/Srivatsarajeev" target="_blank"><FaGithub /></a>
+            <a href="https://github.com" target="_blank"><FaGithub /></a>
             <a href="https://linkedin.com" target="_blank"><FaLinkedin /></a>
-            <a href="mailto:rajeevsrivatsa7@gmail.com"><FaEnvelope /></a>
+            <a href="mailto:your@email.com"><FaEnvelope /></a>
             <a href="https://instagram.com" target="_blank"><FaInstagram /></a>
           </div>
 
-          {/* RESUME */}
           <a href="/resume.pdf" target="_blank" className="resume">
             view resume
           </a>
@@ -93,7 +92,11 @@ export default function App() {
 
         <div className="grid">
           {(showAll ? imageList : randomPhotos).map((img, i) => (
-            <img key={i} src={img} />
+            <img
+              key={i}
+              src={img}
+              onError={(e) => (e.currentTarget.style.display = "none")}
+            />
           ))}
         </div>
 
