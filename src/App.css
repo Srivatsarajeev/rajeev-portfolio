@@ -5,14 +5,12 @@ body {
   font-family: 'Satoshi', sans-serif;
 }
 
-/* LAYOUT */
 .container {
   max-width: 900px;
   margin: auto;
   padding: 50px 20px;
 }
 
-/* HERO */
 .hero {
   display: flex;
   gap: 20px;
@@ -27,119 +25,86 @@ body {
 
 .name {
   font-family: 'Clash Display', sans-serif;
-  font-size: 36px;
-  font-weight: 600;
-  letter-spacing: -0.5px;
+  font-size: 34px;
 }
 
 .subtitle {
   color: #aaa;
-  margin-top: 6px;
-  line-height: 1.5;
 }
 
-/* ICONS (FIXED SPACING) */
+.meta {
+  color: #666;
+  font-size: 14px;
+}
+
+/* ICONS */
 .icons {
   display: flex;
   gap: 18px;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .icons a {
-  font-size: 18px;
   color: #888;
-  transition: all 0.25s ease;
+  font-size: 18px;
 }
 
 .icons a:hover {
   color: white;
-  transform: translateY(-3px);
 }
 
-/* GLASS CARD */
+/* CARD */
 .card {
   margin-top: 30px;
-  padding: 22px;
-  border-radius: 16px;
+  padding: 20px;
+  border-radius: 14px;
   background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.06);
-  transition: 0.3s;
-}
-
-.card:hover {
-  border-color: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 /* SKILLS */
 .skills {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-.skill {
-  padding: 8px 14px;
+.skills span {
+  padding: 6px 12px;
+  background: #111;
   border-radius: 20px;
-  background: rgba(255,255,255,0.06);
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-.skill:hover {
-  background: rgba(255,255,255,0.12);
 }
 
 /* PHOTOS */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 12px;
+  gap: 12px;
 }
 
 .grid img {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 12px;
-  transition: 0.4s;
-}
-
-.grid img:hover {
-  transform: scale(1.05);
+  border-radius: 10px;
 }
 
 /* BUTTON */
 button {
-  margin-top: 12px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #1a1a1a;
+  margin-top: 10px;
+  background: #222;
   color: white;
-  cursor: pointer;
-}
-
-/* RESUME BUTTON */
-.resume {
-  margin-top: 15px;
-  display: inline-block;
-  padding: 8px 14px;
-  border: 1px solid #333;
-  border-radius: 10px;
-}
-
-/* VISITS */
-.visits {
-  margin-top: 40px;
-  color: #777;
-  font-size: 14px;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
 }
 
 /* FOOTER */
+.visits {
+  margin-top: 40px;
+  color: #777;
+}
+
 .footer {
-  margin-top: 10px;
-  color: #666;
-  font-size: 13px;
+  color: #555;
 }

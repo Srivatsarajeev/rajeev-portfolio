@@ -1,111 +1,15 @@
-body {
+* {
   margin: 0;
-  background: #0b0b0b;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
   color: #eaeaea;
-  font-family: 'Satoshi', sans-serif;
 }
 
-/* LAYOUT */
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-/* LEFT */
-.left {
-  padding: 80px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-
-.left h1 {
-  font-size: 48px;
-  line-height: 1.1;
-}
-
-.role {
-  color: #888;
-}
-
-.meta {
-  color: #666;
-  font-size: 14px;
-}
-
-.socials {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.socials img {
-  width: 20px;
-  filter: invert(1);
-}
-
-.spotify {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  color: #1db954;
-}
-
-.intro {
-  margin-top: 25px;
-  color: #aaa;
-}
-
-/* RIGHT */
-.right {
-  padding: 80px;
-}
-
-section {
-  margin-bottom: 60px;
-}
-
-h3 {
-  font-size: 12px;
-  color: #777;
-  text-transform: uppercase;
-}
-
-.item {
-  margin-top: 10px;
-}
-
-/* PHOTO GRID */
-.grid {
-  column-count: 3;
-  column-gap: 12px;
-  margin-top: 20px;
-}
-
-.grid img {
-  width: 100%;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  break-inside: avoid;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .left {
-    position: relative;
-    height: auto;
-    padding: 40px;
-  }
-
-  .right {
-    padding: 40px;
-  }
-
-  .grid {
-    column-count: 2;
-  }
+a {
+  text-decoration: none;
 }
