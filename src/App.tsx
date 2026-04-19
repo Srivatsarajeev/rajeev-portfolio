@@ -2,14 +2,14 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope } from "react-icons/fa";
 
-/* 🔥 AUTO LOAD PHOTOS FROM PUBLIC */
-const images = import.meta.glob("/public/photos/*", {
-  eager: true,
-  as: "url",
-});
-const imageList = Object.values(images);
+/* ✅ AUTO IMAGE LIST (NO MANUAL NAMES) */
+const TOTAL_IMAGES = 30; // 🔥 change if needed
+const imageList = Array.from(
+  { length: TOTAL_IMAGES },
+  (_, i) => `/photos/${i + 1}.jpg`
+);
 
-/* DAYS ALIVE */
+/* ✅ DAYS ALIVE */
 const birth = new Date("2003-05-14");
 const daysAlive = Math.floor(
   (Date.now() - birth.getTime()) / (1000 * 60 * 60 * 24)
@@ -19,21 +19,22 @@ export default function App() {
   const [visits, setVisits] = useState(0);
   const [showAll, setShowAll] = useState(false);
 
-  /* VISITOR COUNT */
+  /* ✅ VISITOR COUNT (REAL) */
   useEffect(() => {
-    fetch("https://api.countapi.xyz/hit/rajeev-portfolio-final/visits")
+    fetch("https://api.countapi.xyz/hit/rajeev-portfolio/visits")
       .then((res) => res.json())
-      .then((data) => setVisits(data.value));
+      .then((data) => setVisits(data.value))
+      .catch(() => setVisits(0));
   }, []);
 
-  /* RANDOM 4 IMAGES */
+  /* ✅ RANDOM 4 IMAGES */
   const randomPhotos = [...imageList]
     .sort(() => 0.5 - Math.random())
     .slice(0, 4);
 
   return (
     <div className="container">
-
+      
       {/* HERO */}
       <div className="hero">
         <img src="/profile.jpg" alt="profile" />
@@ -43,17 +44,25 @@ export default function App() {
 
           <p className="subtitle">
             slightly confused, mostly curious.<br />
-            i build stuff with ml, cloud, and devops.
+            i build stuff with ml, cloud, and devops — and figure things out along the way.
           </p>
 
           <p className="meta">{daysAlive} days alive</p>
 
-          {/* ICONS */}
+          {/* SOCIAL ICONS */}
           <div className="icons">
-            <a href="https://github.com" target="_blank"><FaGithub /></a>
-            <a href="https://linkedin.com" target="_blank"><FaLinkedin /></a>
-            <a href="mailto:your@email.com"><FaEnvelope /></a>
-            <a href="https://instagram.com" target="_blank"><FaInstagram /></a>
+            <a href="https://github.com" target="_blank">
+              <FaGithub />
+            </a>
+            <a href="https://linkedin.com" target="_blank">
+              <FaLinkedin />
+            </a>
+            <a href="mailto:you@email.com">
+              <FaEnvelope />
+            </a>
+            <a href="https://instagram.com" target="_blank">
+              <FaInstagram />
+            </a>
           </div>
 
           <a href="/resume.pdf" target="_blank" className="resume">
@@ -95,6 +104,7 @@ export default function App() {
             <img
               key={i}
               src={img}
+              alt=""
               onError={(e) => (e.currentTarget.style.display = "none")}
             />
           ))}

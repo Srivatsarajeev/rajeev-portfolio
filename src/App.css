@@ -31,6 +31,7 @@ body {
 
 .subtitle {
   color: #aaa;
+  line-height: 1.5;
 }
 
 .meta {
@@ -47,7 +48,8 @@ body {
 
 .icons a {
   color: #888;
-  font-size: 18px;
+  font-size: 20px;
+  transition: 0.3s;
 }
 
 .icons a:hover {
@@ -66,9 +68,10 @@ body {
 .card {
   margin-top: 30px;
   padding: 20px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
 }
 
 /* SKILLS */
@@ -79,9 +82,10 @@ body {
 }
 
 .skills span {
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: #111;
   border-radius: 20px;
+  font-size: 14px;
 }
 
 /* PHOTOS */
@@ -95,17 +99,27 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.grid img:hover {
+  transform: scale(1.05);
 }
 
 /* BUTTON */
 button {
-  margin-top: 10px;
+  margin-top: 12px;
   background: #222;
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #333;
 }
 
 /* FOOTER */
@@ -116,4 +130,5 @@ button {
 
 .footer {
   color: #555;
+  margin-top: 6px;
 }
