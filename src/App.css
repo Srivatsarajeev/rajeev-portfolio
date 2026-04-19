@@ -1,100 +1,74 @@
-:root {
-  --bg: #0b0b0f;
-  --text: #eaeaea;
-  --muted: #9aa0a6;
-  --glass: rgba(255,255,255,0.05);
-  --border: rgba(255,255,255,0.08);
-  --accent: #22c55e;
-}
-
-.light {
-  --bg: #ffffff;
-  --text: #111;
-  --muted: #555;
-  --glass: rgba(0,0,0,0.05);
-  --border: rgba(0,0,0,0.1);
-}
-
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: radial-gradient(circle at top, #12121a, var(--bg));
-  color: var(--text);
-  transition: 0.3s;
+  background: #0a0a0a;
+  color: #eaeaea;
+  font-family: 'Satoshi', sans-serif;
 }
 
+/* LAYOUT */
 .container {
-  max-width: 1100px;
+  max-width: 900px;
   margin: auto;
-  padding: 60px 20px;
+  padding: 50px 20px;
 }
 
 /* HERO */
 .hero {
   display: flex;
-  gap: 25px;
+  gap: 20px;
   align-items: center;
-  animation: fadeUp 0.8s ease;
 }
 
-.profile {
+.hero img {
   width: 90px;
   height: 90px;
   border-radius: 50%;
 }
 
-.hero h1 {
-  font-family: 'Playfair Display';
-  font-size: 48px;
-  margin: 0;
+.name {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: var(--muted);
+  color: #aaa;
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
-/* SOCIAL */
-.socials {
+/* ICONS (FIXED SPACING) */
+.icons {
   display: flex;
-  gap: 16px;
-  margin-top: 10px;
+  gap: 18px;
+  margin-top: 14px;
 }
 
-.socials i {
-  cursor: pointer;
-  opacity: 0.7;
-  transition: 0.3s;
+.icons a {
+  font-size: 18px;
+  color: #888;
+  transition: all 0.25s ease;
 }
 
-.socials i:hover {
-  opacity: 1;
-  transform: scale(1.2);
+.icons a:hover {
+  color: white;
+  transform: translateY(-3px);
 }
 
-/* SPOTIFY */
-.spotify {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--accent);
-  margin-top: 10px;
-}
-
-/* CARD */
+/* GLASS CARD */
 .card {
-  margin-top: 25px;
-  padding: 20px;
+  margin-top: 30px;
+  padding: 22px;
   border-radius: 16px;
-  background: var(--glass);
+  background: rgba(255,255,255,0.03);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,255,255,0.06);
   transition: 0.3s;
-  animation: fadeUp 0.8s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(34,197,94,0.2);
+  border-color: rgba(255,255,255,0.15);
 }
 
 /* SKILLS */
@@ -105,71 +79,67 @@ body {
 }
 
 .skill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  background: var(--glass);
-  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  font-size: 14px;
+  transition: 0.2s;
 }
 
-/* EXPERIENCE */
-.exp {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.exp img {
-  width: 45px;
-  border-radius: 8px;
+.skill:hover {
+  background: rgba(255,255,255,0.12);
 }
 
 /* PHOTOS */
-.photo-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 12px;
 }
 
-.photo-grid img {
+.grid img {
   width: 100%;
+  height: 200px;
+  object-fit: cover;
   border-radius: 12px;
   transition: 0.4s;
 }
 
-.photo-grid img:hover {
+.grid img:hover {
   transform: scale(1.05);
 }
 
 /* BUTTON */
-.view-more {
+button {
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #1a1a1a;
+  color: white;
+  cursor: pointer;
+}
+
+/* RESUME BUTTON */
+.resume {
+  margin-top: 15px;
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid #333;
+  border-radius: 10px;
+}
+
+/* VISITS */
+.visits {
+  margin-top: 40px;
+  color: #777;
+  font-size: 14px;
+}
+
+/* FOOTER */
+.footer {
   margin-top: 10px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-}
-
-/* TOGGLE */
-.toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
-}
-
-/* ANIMATION */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  color: #666;
+  font-size: 13px;
 }
