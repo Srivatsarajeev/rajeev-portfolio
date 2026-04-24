@@ -3,7 +3,13 @@
 <head> 
   <meta charset="UTF-8"/> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
-  <title>Rajeev M — DevOps · ML · MERN</title> 
+  <title>Rajeev M — DevOps · ML · MERN</title>
+  <script>
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  </script> 
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
   <link 
@@ -105,7 +111,7 @@ rel="stylesheet">
     nav { 
       position: fixed; top: 36px; left: 0; right: 0; z-index: 700; 
       height: 52px; 
-      background: rgba(8,8,8,.92); backdrop-filter: blur(20px); 
+      background: var(--nav-bg); backdrop-filter: blur(20px); 
       border-bottom: 1px solid var(--border); 
       display: flex; align-items: center; justify-content: space-between; 
       padding: 0 28px; 
@@ -258,7 +264,7 @@ rel="stylesheet">
  
     .profile-info { 
       position: absolute; bottom: 0; left: 0; right: 0; 
-      background: linear-gradient(to top, rgba(8,8,8,.95) 0%, transparent 100%); 
+      background: linear-gradient(to top, var(--grad-bg) 0%, transparent 100%); 
       padding: 36px 20px 20px; 
     } 
     .profile-name { 
@@ -688,7 +694,8 @@ rel="stylesheet">
     <a href="#github">GitHub</a> 
     <a href="#contact">Contact</a> 
   </div> 
-  <div class="nav-right"> 
+  <div class="nav-right">
+    <button id="themeToggle" style="background:none;border:none;cursor:none;font-size:16px;color:var(--fg3);display:flex;align-items:center;justify-content:center;transition:color .2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--fg3)'">🌓</button> 
     <a href="https://github.com/Srivatsarajeev" target="_blank" 
        style="color:var(--fg3);font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .2s" 
        onmouseover="this.style.color='var(--accent)'" 
@@ -873,7 +880,7 @@ rel="stylesheet">
       <div class="proj r"> 
         <div class="proj-n">01</div> 
         <div> 
-          <span class="proj-emoji">⚡</span> 
+           
           <div class="proj-title">Vidyut — Energy Analytics Platform</div> 
           <div class="proj-tag-label prob-label">The Problem</div> 
           <p class="proj-text">Energy consumption data is scattered, unstructured, and not used efficiently — leading to wastage and poor optimization across facilities.</p> 
@@ -885,7 +892,7 @@ rel="stylesheet">
           </div> 
         </div> 
         <div class="proj-meta"> 
-          <div class="proj-status">Ongoing</div> 
+          <div class="proj-status" style="color:var(--fg3); --green:var(--fg3)">Completed</div> 
           <div style="font-size:9px;color:var(--fg3);line-height:1.8">Cloud · ML · Analytics</div> 
         </div> 
       </div> 
@@ -894,7 +901,7 @@ rel="stylesheet">
       <div class="proj r d1"> 
         <div class="proj-n">02</div> 
         <div> 
-          <span class="proj-emoji">🦅</span> 
+           
           <div class="proj-title">Garuda — Soldier Monitoring System</div> 
           <div class="proj-tag-label prob-label">The Problem</div> 
           <p class="proj-text">Lack of real-time monitoring and response in critical defense/emergency environments — causing delayed action and risk to human lives.</p> 
@@ -915,8 +922,8 @@ rel="stylesheet">
       <div class="proj r d2"> 
         <div class="proj-n">03</div> 
         <div> 
-          <span class="proj-emoji">🔁</span> 
-          <div class="proj-title">CI/CD Kubernetes Monitoring System</div> 
+           
+          <div class="proj-title">Genesis Cloud <span style="font-size:14px;color:var(--fg3);font-weight:400">— CI/CD Kubernetes Monitoring System</span></div> 
           <div class="proj-tag-label prob-label">The Problem</div> 
           <p class="proj-text">Manual deployments break things. No visibility into what's running, what's broken, and why the pod crashed at 3am on a Friday.</p> 
           <div class="proj-tag-label sol-label">The Solution</div> 
@@ -1307,6 +1314,18 @@ rel="stylesheet">
       .then(r => r.json()) 
       .then(data => { ... map data.contributions to hm-day cells }) 
 ── */ 
+
+  /* ── Theme Toggle ── */
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const root = document.documentElement;
+      const current = root.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  }
 </script> 
 </body> 
 </html>
