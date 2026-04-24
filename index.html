@@ -1,17 +1,1312 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rajeev Srivatsa</title>
-
-    <!-- PREMIUM FONTS -->
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@500,600&display=swap" rel="stylesheet">
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"/> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+  <title>Rajeev M — DevOps · ML · MERN</title> 
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link 
+href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Geist+Mono:wght@300;400;500&display=swap" 
+rel="stylesheet"> 
+ 
+  <style> 
+    /*────────────────────────────────────── 
+      RESET & TOKENS 
+    ──────────────────────────────────────*/ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } 
+ 
+    :root { 
+      --bg:      #080808; 
+      --bg1:     #0c0c0c; 
+      --bg2:     #111; 
+      --fg:      #ede9df; 
+      --fg2:     #888; 
+      --fg3:     #3a3a3a; 
+      --accent:  #d4ff1e; 
+      --orange:  #ff5c35; 
+      --green:   #1db954; 
+      --border:  #181818; 
+      --border2: #222; 
+      --font-display: 'Bebas Neue', sans-serif; 
+      --font-serif:   'Libre Baskerville', serif; 
+      --font-mono:    'Geist Mono', monospace; 
+    } 
+ 
+    html { scroll-behavior: smooth; } 
+ 
+    body { 
+      background: var(--bg); 
+      color: var(--fg); 
+      font-family: var(--font-mono); 
+      font-size: 13px; 
+      line-height: 1.7; 
+      overflow-x: hidden; 
+      cursor: none; 
+    } 
+ 
+    /*────────────────────────────────────── 
+      CURSOR 
+    ──────────────────────────────────────*/ 
+    #cur { 
+      position: fixed; 
+      width: 9px; height: 9px; 
+      background: var(--accent); 
+      border-radius: 50%; 
+      pointer-events: none; 
+      z-index: 9999; 
+      transform: translate(-50%,-50%); 
+      transition: width .15s, height .15s, background .15s, border-radius .15s; 
+      mix-blend-mode: difference; 
+    } 
+    #cur.hov { width: 42px; height: 42px; } 
+    #cur.lnk { width: 28px; height: 28px; background: var(--orange); border-radius: 4px; } 
+ 
+    /*────────────────────────────────────── 
+      GRAIN OVERLAY 
+    ──────────────────────────────────────*/ 
+    #grain { 
+      position: fixed; inset: 0; z-index: 9000; pointer-events: none; 
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); 
+      opacity: .038; 
+    } 
+ 
+    /*────────────────────────────────────── 
+      SCROLLBAR 
+    ──────────────────────────────────────*/ 
+    ::-webkit-scrollbar { width: 3px; } 
+    ::-webkit-scrollbar-track { background: var(--bg); } 
+    ::-webkit-scrollbar-thumb { background: var(--border2); } 
+ 
+    /*────────────────────────────────────── 
+      TOP STATUS BAR 
+    ──────────────────────────────────────*/ 
+    #statusbar { 
+      position: fixed; top: 0; left: 0; right: 0; z-index: 800; 
+      height: 36px; 
+      background: var(--bg); 
+      border-bottom: 1px solid var(--border); 
+      display: flex; align-items: center; justify-content: space-between; 
+      padding: 0 28px; 
+      font-size: 10px; letter-spacing: .12em; color: var(--fg3); 
+    } 
+    .sb-left { display: flex; gap: 20px; align-items: center; } 
+    .sb-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; } 
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(1.6)} } 
+    .sb-item { display: flex; align-items: center; gap: 6px; } 
+    .sb-item span { color: var(--fg2); } 
+    #clock { color: var(--fg); font-weight: 500; } 
+    #bday-count { color: var(--accent); font-weight: 500; } 
+    #visit-count { color: var(--accent); font-weight: 500; } 
+ 
+    /*────────────────────────────────────── 
+      NAV 
+    ──────────────────────────────────────*/ 
+    nav { 
+      position: fixed; top: 36px; left: 0; right: 0; z-index: 700; 
+      height: 52px; 
+      background: rgba(8,8,8,.92); backdrop-filter: blur(20px); 
+      border-bottom: 1px solid var(--border); 
+      display: flex; align-items: center; justify-content: space-between; 
+      padding: 0 28px; 
+    } 
+    .nav-logo { 
+      font-family: var(--font-display); 
+      font-size: 20px; letter-spacing: .08em; 
+      color: var(--fg); text-decoration: none; 
+    } 
+    .nav-logo sup { font-size: 9px; color: var(--accent); letter-spacing: .2em; font-family: var(--font-mono); } 
+    .nav-links { display: flex; gap: 28px; } 
+    .nav-links a { 
+      color: var(--fg3); text-decoration: none; 
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase; 
+      transition: color .2s; 
+    } 
+    .nav-links a:hover { color: var(--accent); } 
+    .nav-right { display: flex; align-items: center; gap: 14px; } 
+ 
+    /*────────────────────────────────────── 
+      HERO 
+    ──────────────────────────────────────*/ 
+    .hero { 
+      min-height: 100vh; 
+      padding: 130px 28px 80px; 
+      display: grid; 
+      grid-template-columns: 1fr 380px; 
+      gap: 60px; 
+      align-items: center; 
+      border-bottom: 1px solid var(--border); 
+      position: relative; 
+      overflow: hidden; 
+    } 
+ 
+    /* animated scanlines */ 
+    .hero::before { 
+      content: ''; 
+      position: absolute; inset: 0; pointer-events: none; 
+      background: repeating-linear-gradient( 
+        0deg, 
+        transparent, 
+        transparent 3px, 
+        rgba(255,255,255,.007) 3px, 
+        rgba(255,255,255,.007) 4px 
+      ); 
+    } 
+ 
+    /* grid */ 
+    .hero-grid { 
+      position: absolute; inset: 0; pointer-events: none; 
+      background-image: 
+        linear-gradient(rgba(212,255,30,.015) 1px, transparent 1px), 
+        linear-gradient(90deg, rgba(212,255,30,.015) 1px, transparent 1px); 
+      background-size: 56px 56px; 
+      animation: gridMove 25s linear infinite; 
+    } 
+    @keyframes gridMove { to { background-position: 56px 56px; } } 
+ 
+    .hero-left { position: relative; z-index: 2; } 
+ 
+    .hero-tag { 
+      display: inline-flex; align-items: center; gap: 7px; 
+      font-size: 10px; letter-spacing: .18em; text-transform: uppercase; 
+      color: var(--accent); margin-bottom: 20px; 
+      opacity: 0; animation: fadeUp .6s .1s forwards; 
+    } 
+ 
+    .hero-name { 
+      font-family: var(--font-display); 
+      font-size: clamp(70px, 11vw, 156px); 
+      line-height: .86; letter-spacing: .04em; 
+      margin-bottom: 6px; 
+      opacity: 0; animation: fadeUp .8s .2s forwards; 
+    } 
+    .hero-name .outline { 
+      -webkit-text-stroke: 1px rgba(212,255,30,.35); 
+      color: transparent; 
+    } 
+ 
+    .hero-subtitle { 
+      font-family: var(--font-serif); font-style: italic; 
+      font-size: clamp(16px, 2vw, 24px); 
+      color: var(--fg2); letter-spacing: -.01em; 
+      margin-bottom: 28px; 
+      opacity: 0; animation: fadeUp .6s .38s forwards; 
+    } 
+ 
+    .hero-bio { 
+      max-width: 520px; font-size: 13px; color: #4a4a4a; 
+      line-height: 1.9; margin-bottom: 40px; 
+      opacity: 0; animation: fadeUp .6s .5s forwards; 
+    } 
+    .hero-bio strong { color: var(--fg2); } 
+ 
+    .hero-btns { 
+      display: flex; gap: 12px; flex-wrap: wrap; 
+      opacity: 0; animation: fadeUp .6s .62s forwards; 
+    } 
+    .btn-fill { 
+      padding: 12px 26px; 
+      background: var(--accent); color: #080808; 
+      font-family: var(--font-mono); font-size: 10px; 
+      font-weight: 500; letter-spacing: .12em; text-transform: uppercase; 
+      text-decoration: none; transition: all .2s; 
+    } 
+    .btn-fill:hover { background: #fff; transform: translateY(-2px); } 
+    .btn-ghost { 
+      padding: 12px 26px; 
+      border: 1px solid var(--border2); color: var(--fg); 
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase; 
+      text-decoration: none; transition: all .2s; 
+    } 
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); } 
+ 
+    /* profile card */ 
+    .hero-right { 
+      position: relative; z-index: 2; 
+      opacity: 0; animation: fadeIn .9s .25s forwards; 
+    } 
+    .profile-wrap { 
+      position: relative; 
+    } 
+    .profile-img { 
+      width: 100%; aspect-ratio: 3/4; 
+      background: var(--bg2); 
+      overflow: hidden; 
+      border: 1px solid var(--border); 
+    } 
+    .profile-img img { 
+      width: 100%; height: 100%; object-fit: cover; 
+      filter: grayscale(15%); 
+      transition: filter .4s; 
+    } 
+    .profile-img:hover img { filter: grayscale(0%); } 
+    .profile-img .no-img { 
+      width: 100%; height: 100%; 
+      display: flex; flex-direction: column; 
+      align-items: center; justify-content: center; 
+      gap: 12px; color: var(--fg3); 
+      font-size: 11px; letter-spacing: .1em; text-align: center; padding: 20px; 
+    } 
+    .profile-img .no-img span { font-size: 52px; } 
+ 
+    /* accent corner */ 
+    .p-corner-tl, .p-corner-br { 
+      position: absolute; width: 40px; height: 40px; 
+    } 
+    .p-corner-tl { top: -8px; left: -8px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); } 
+    .p-corner-br { bottom: -8px; right: -8px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); } 
+ 
+    .profile-info { 
+      position: absolute; bottom: 0; left: 0; right: 0; 
+      background: linear-gradient(to top, rgba(8,8,8,.95) 0%, transparent 100%); 
+      padding: 36px 20px 20px; 
+    } 
+    .profile-name { 
+      font-family: var(--font-display); font-size: 22px; letter-spacing: .06em; 
+    } 
+    .profile-loc { font-size: 10px; color: var(--fg3); letter-spacing: .1em; margin-top: 2px; } 
+ 
+    /*────────────────────────────────────── 
+      SECTION BASE 
+    ──────────────────────────────────────*/ 
+    section { border-bottom: 1px solid var(--border); } 
+    .si { padding: 88px 28px; max-width: 1160px; margin: 0 auto; } 
+ 
+    .slabel { 
+      font-size: 10px; letter-spacing: .2em; text-transform: uppercase; 
+      color: var(--accent); margin-bottom: 56px; 
+      display: flex; align-items: center; gap: 12px; 
+    } 
+    .slabel em { color: var(--fg3); font-style: normal; } 
+    .slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); } 
+ 
+    /*────────────────────────────────────── 
+      MARQUEE 
+    ──────────────────────────────────────*/ 
+    .marquee-wrap { 
+      overflow: hidden; 
+      border-top: 1px solid var(--border); 
+      border-bottom: 1px solid var(--border); 
+      padding: 14px 0; 
+      background: var(--bg1); 
+    } 
+    .marquee-track { 
+      display: flex; gap: 0; 
+      animation: marquee 22s linear infinite; 
+      white-space: nowrap; 
+    } 
+    .marquee-track span { 
+      font-family: var(--font-display); 
+      font-size: 13px; letter-spacing: .14em; 
+      color: var(--fg3); padding: 0 28px; 
+    } 
+    .marquee-track span.acc { color: var(--accent); } 
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } } 
+ 
+    /*────────────────────────────────────── 
+      ABOUT 
+    ──────────────────────────────────────*/ 
+    .about-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; } 
+    .about-h { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: clamp(34px, 4.5vw, 58px); 
+      line-height: 1.04; letter-spacing: -.02em; margin-bottom: 28px; 
+    } 
+    .about-h em { font-style: italic; color: var(--accent); } 
+    .about-body { font-size: 13px; color: #4a4a4a; line-height: 1.95; } 
+    .about-body p + p { margin-top: 16px; } 
+    .about-body strong { color: var(--fg2); } 
+    .pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 28px; } 
+    .pill { 
+      padding: 5px 13px; border: 1px solid var(--border2); 
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase; 
+      color: var(--fg3); transition: all .2s; 
+    } 
+    .pill:hover { border-color: var(--accent); color: var(--accent); } 
+ 
+    /*────────────────────────────────────── 
+      SKILLS GRID 
+    ──────────────────────────────────────*/ 
+    .skills-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); } 
+    .skill-cell { background: var(--bg); padding: 30px 24px; } 
+    .sc-title { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; } 
+    .sc-items { display: flex; flex-wrap: wrap; gap: 6px; } 
+    .sc-tag { 
+      padding: 4px 11px; border: 1px solid var(--border); 
+      font-size: 10px; color: #383838; letter-spacing: .06em; 
+      transition: all .2s; 
+    } 
+    .sc-tag:hover { border-color: var(--accent); color: var(--accent); } 
+ 
+    /*────────────────────────────────────── 
+      PROJECTS 
+    ──────────────────────────────────────*/ 
+    .proj-list { display: flex; flex-direction: column; } 
+ 
+    .proj { 
+      display: grid; grid-template-columns: 64px 1fr auto; 
+      gap: 32px; align-items: start; 
+      padding: 52px 0; border-top: 1px solid var(--border); 
+      position: relative; transition: all .2s; 
+    } 
+    .proj::after { 
+      content: ''; 
+      position: absolute; left: 0; top: 0; bottom: 0; width: 2px; 
+      background: var(--accent); 
+      transform: scaleY(0); transform-origin: top; 
+      transition: transform .4s cubic-bezier(.16,1,.3,1); 
+    } 
+    .proj:hover::after { transform: scaleY(1); } 
+ 
+    .proj-n { 
+      font-family: var(--font-display); 
+      font-size: 48px; line-height: 1; 
+      color: var(--border2); letter-spacing: .02em; 
+      padding-top: 2px; transition: color .25s; 
+    } 
+    .proj:hover .proj-n { color: #252525; } 
+ 
+    .proj-emoji { font-size: 28px; margin-bottom: 10px; display: block; } 
+    .proj-title { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.01em; 
+      margin-bottom: 12px; transition: color .2s; 
+    } 
+    .proj:hover .proj-title { color: var(--accent); } 
+    .proj-tag-label { 
+      font-size: 9px; letter-spacing: .16em; text-transform: uppercase; 
+      margin-bottom: 5px; 
+    } 
+    .prob-label { color: var(--orange); } 
+    .sol-label { color: var(--green); } 
+    .proj-text { font-size: 12px; color: #3e3e3e; line-height: 1.85; margin-bottom: 16px; } 
+    .proj-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px; } 
+    .proj-chip { 
+      font-size: 9px; letter-spacing: .08em; text-transform: uppercase; 
+      padding: 3px 9px; border: 1px solid var(--border); color: #2e2e2e; 
+    } 
+    .proj-meta { text-align: right; padding-top: 4px; } 
+    .proj-status { 
+      display: inline-flex; align-items: center; gap: 5px; 
+      font-size: 9px; letter-spacing: .14em; text-transform: uppercase; 
+      color: var(--green); white-space: nowrap; margin-bottom: 8px; 
+    } 
+    .proj-status::before { 
+      content: ''; width: 4px; height: 4px; 
+      background: var(--green); border-radius: 50%; 
+      animation: pulse 2s infinite; 
+    } 
+ 
+    /*────────────────────────────────────── 
+      EXPERIENCE 
+    ──────────────────────────────────────*/ 
+    .exp-row { 
+      display: grid; grid-template-columns: 160px 1fr; 
+      gap: 40px; padding: 44px 0; border-top: 1px solid var(--border); 
+    } 
+    .exp-meta { font-size: 10px; color: var(--fg3); line-height: 1.9; } 
+    .exp-co { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: 22px; letter-spacing: -.01em; margin-bottom: 4px; 
+    } 
+    .exp-role { font-size: 11px; color: var(--fg3); letter-spacing: .06em; margin-bottom: 12px; } 
+    .exp-bullets { list-style: none; } 
+    .exp-bullets li { 
+      font-size: 12px; color: #3a3a3a; line-height: 1.85; 
+      padding: 3px 0; padding-left: 14px; position: relative; 
+    } 
+    .exp-bullets li::before { 
+      content: '→'; position: absolute; left: 0; 
+      color: var(--accent); font-size: 10px; 
+    } 
+ 
+    /*────────────────────────────────────── 
+      EDUCATION 
+    ──────────────────────────────────────*/ 
+    .edu-block { 
+      display: grid; grid-template-columns: 1fr auto; 
+      gap: 24px; align-items: start; 
+      background: var(--bg1); border: 1px solid var(--border); 
+      padding: 44px; 
+    } 
+    .edu-school { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: 26px; letter-spacing: -.02em; margin-bottom: 6px; 
+    } 
+    .edu-degree { font-size: 13px; color: var(--fg3); margin-bottom: 14px; } 
+    .edu-yr { 
+      font-family: var(--font-display); font-size: 60px; 
+      color: var(--border2); line-height: 1; letter-spacing: .02em; text-align: right; 
+    } 
+    .edu-badge { 
+      display: inline-flex; align-items: center; gap: 6px; 
+      padding: 5px 14px; border: 1px solid rgba(212,255,30,.25); 
+      font-size: 9px; letter-spacing: .14em; text-transform: uppercase; 
+      color: var(--accent); 
+    } 
+ 
+    /*────────────────────────────────────── 
+      GITHUB HEATMAP 
+    ──────────────────────────────────────*/ 
+    .gh-wrap { 
+      background: var(--bg1); border: 1px solid var(--border); 
+      padding: 32px; overflow-x: auto; 
+    } 
+    .gh-header { 
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px; 
+    } 
+    .gh-title { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg2); } 
+    .gh-user { color: var(--accent); } 
+    #heatmap-container { display: flex; gap: 3px; } 
+    .hm-week { display: flex; flex-direction: column; gap: 3px; } 
+    .hm-day { 
+      width: 11px; height: 11px; border-radius: 2px; 
+      background: var(--border2); transition: transform .1s; 
+    } 
+    .hm-day:hover { transform: scale(1.4); } 
+    .hm-day.l1 { background: #0e4429; } 
+    .hm-day.l2 { background: #006d32; } 
+    .hm-day.l3 { background: #26a641; } 
+    .hm-day.l4 { background: #39d353; } 
+    .hm-legend { 
+      display: flex; align-items: center; gap: 5px; 
+      margin-top: 14px; font-size: 9px; color: var(--fg3); 
+    } 
+    .hm-legend-sq { 
+      width: 9px; height: 9px; border-radius: 2px; 
+    } 
+    .gh-note { 
+      font-size: 11px; color: var(--fg3); margin-top: 12px; line-height: 1.7; 
+    } 
+    .gh-note a { color: var(--accent); } 
+ 
+    /*────────────────────────────────────── 
+      SPOTIFY / MUSIC 
+    ──────────────────────────────────────*/ 
+    .music-wrap { display: flex; gap: 52px; align-items: center; flex-wrap: wrap; } 
+    .spotify-card { 
+      flex-shrink: 0; 
+      background: var(--bg1); border: 1px solid var(--border); 
+      border-radius: 12px; padding: 22px 26px; 
+      display: flex; align-items: center; gap: 20px; 
+      text-decoration: none; position: relative; overflow: hidden; 
+      transition: border-color .3s, transform .3s, box-shadow .3s; 
+    } 
+    .spotify-card:hover { 
+      border-color: var(--green); transform: translateY(-4px); 
+      box-shadow: 0 18px 52px rgba(29,185,84,.12); 
+    } 
+    .spot-alb { 
+      width: 76px; height: 76px; border-radius: 6px; 
+      flex-shrink: 0; background: #1a1a1a; overflow: hidden; 
+    } 
+    .spot-alb img { width: 100%; height: 100%; object-fit: cover; } 
+    .spot-now { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--green); margin-bottom: 4px; } 
+    .spot-song { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: 18px; color: var(--fg); margin-bottom: 2px; 
+    } 
+    .spot-artist { color: #3a3a3a; font-size: 11px; margin-bottom: 8px; } 
+    .spot-bars { display: flex; align-items: flex-end; gap: 2px; height: 15px; } 
+    .sb { width: 2.5px; border-radius: 2px; background: var(--green); animation: sb 1s ease-in-out infinite alternate; } 
+    .sb:nth-child(1){height:5px;animation-delay:0s} 
+    .sb:nth-child(2){height:10px;animation-delay:.12s} 
+    .sb:nth-child(3){height:7px;animation-delay:.24s} 
+    .sb:nth-child(4){height:13px;animation-delay:.08s} 
+    .sb:nth-child(5){height:4px;animation-delay:.18s} 
+    @keyframes sb{from{transform:scaleY(.3)}to{transform:scaleY(1)}} 
+    .spot-play { 
+      width: 40px; height: 40px; border-radius: 50%; 
+      background: var(--green); display: flex; align-items: center; 
+      justify-content: center; flex-shrink: 0; margin-left: 4px; 
+      transition: transform .2s, background .2s; 
+    } 
+    .spotify-card:hover .spot-play { transform: scale(1.1); background: #1ed760; } 
+    .spot-play svg { margin-left: 2px; } 
+    .music-txt { flex: 1; min-width: 220px; } 
+    .music-txt h3 { 
+      font-family: var(--font-serif); font-style: italic; 
+      font-size: clamp(26px, 3vw, 38px); letter-spacing: -.02em; margin-bottom: 8px; 
+    } 
+    .music-txt p { font-size: 12px; color: #3a3a3a; line-height: 1.85; } 
+ 
+    /*────────────────────────────────────── 
+      WRITING / BLOGS 
+    ──────────────────────────────────────*/ 
+    .blog-sub { 
+      font-family: var(--font-serif); font-style: italic; 
+      font-size: 13px; color: var(--fg3); margin-bottom: 36px; letter-spacing: .02em; 
+    } 
+    .blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); } 
+    .blog-card { 
+      background: var(--bg); padding: 30px 26px; 
+      text-decoration: none; color: inherit; display: block; 
+      transition: background .2s; 
+    } 
+    .blog-card:hover { background: var(--bg1); } 
+    .blog-date { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg3); margin-bottom: 10px; } 
+    .blog-title { 
+      font-family: var(--font-serif); font-weight: 700; 
+      font-size: 17px; letter-spacing: -.01em; margin-bottom: 8px; 
+      line-height: 1.35; transition: color .2s; 
+    } 
+    .blog-card:hover .blog-title { color: var(--accent); } 
+    .blog-desc { font-size: 11px; color: #333; line-height: 1.8; } 
+    .blog-more { 
+      display: inline-flex; align-items: center; gap: 5px; 
+      margin-top: 14px; font-size: 9px; letter-spacing: .12em; 
+      text-transform: uppercase; color: var(--fg3); transition: color .2s; 
+    } 
+    .blog-card:hover .blog-more { color: var(--accent); } 
+ 
+    /*────────────────────────────────────── 
+      VISIT COUNTER (big) 
+    ──────────────────────────────────────*/ 
+    .visit-big-wrap { display: flex; gap: 60px; align-items: center; flex-wrap: wrap; } 
+    .visit-big-num { 
+      font-family: var(--font-display); 
+      font-size: clamp(100px, 15vw, 200px); 
+      line-height: .88; letter-spacing: .02em; color: var(--accent); 
+      text-shadow: 0 0 80px rgba(212,255,30,.2); 
+    } 
+    .visit-big-label { 
+      font-size: 10px; letter-spacing: .18em; text-transform: uppercase; 
+      color: var(--fg3); margin-top: 8px; 
+    } 
+    .visit-right h3 { 
+      font-family: var(--font-serif); font-style: italic; 
+      font-size: clamp(28px, 3.5vw, 46px); letter-spacing: -.02em; margin-bottom: 10px; 
+    } 
+    .visit-right p { font-size: 12px; color: #333; line-height: 1.9; } 
+    .bday-strip { 
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; 
+    } 
+    .bday-chip { 
+      padding: 8px 18px; background: var(--bg1); border: 1px solid var(--border2); 
+      font-size: 11px; letter-spacing: .06em; 
+    } 
+    .bday-chip strong { color: var(--accent); } 
+ 
+    /*────────────────────────────────────── 
+      SOCIAL / CONTACT 
+    ──────────────────────────────────────*/ 
+    .contact-big { 
+      font-family: var(--font-display); 
+      font-size: clamp(58px, 10vw, 148px); 
+      line-height: .86; letter-spacing: .03em; margin-bottom: 52px; 
+    } 
+    .contact-ghost { 
+      color: transparent; 
+      -webkit-text-stroke: 1px rgba(212,255,30,.28); 
+    } 
+    .social-row { display: flex; gap: 10px; flex-wrap: wrap; } 
+    .soc-btn { 
+      display: flex; align-items: center; gap: 10px; 
+      padding: 13px 22px; border: 1px solid var(--border2); 
+      color: var(--fg); text-decoration: none; 
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase; 
+      transition: all .2s; white-space: nowrap; 
+    } 
+    .soc-btn:hover { border-color: var(--accent); color: var(--accent); } 
+    .soc-btn:hover svg * { stroke: var(--accent); } 
+    .soc-btn svg { width: 14px; height: 14px; flex-shrink: 0; } 
+ 
+    /*────────────────────────────────────── 
+      FOOTER 
+    ──────────────────────────────────────*/ 
+    footer { 
+      padding: 24px 28px; 
+      display: flex; justify-content: space-between; align-items: center; 
+      font-size: 10px; color: var(--fg3); max-width: 1160px; margin: 0 auto; 
+      flex-wrap: wrap; gap: 10px; 
+    } 
+ 
+    /*────────────────────────────────────── 
+      ANIMATIONS 
+    ──────────────────────────────────────*/ 
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} } 
+    @keyframes fadeIn  { from{opacity:0} to{opacity:1} } 
+ 
+    .r { opacity:0; transform:translateY(22px); transition:opacity .65s ease, transform .65s ease; } 
+    .r.on { opacity:1; transform:none; } 
+    .r.d1{transition-delay:.07s} .r.d2{transition-delay:.14s} 
+    .r.d3{transition-delay:.21s} .r.d4{transition-delay:.28s} 
+    .r.d5{transition-delay:.35s} 
+ 
+    /*────────────────────────────────────── 
+      RESPONSIVE 
+    ──────────────────────────────────────*/ 
+    @media(max-width:1000px){ 
+      .hero{grid-template-columns:1fr;padding:130px 20px 60px} 
+      .hero-right{max-width:320px} 
+      .about-cols{grid-template-columns:1fr;gap:36px} 
+      .skills-grid{grid-template-columns:repeat(2,1fr)} 
+      .proj{grid-template-columns:52px 1fr;gap:20px} 
+      .proj-meta{display:none} 
+      .blog-grid{grid-template-columns:repeat(2,1fr)} 
+      .edu-block{grid-template-columns:1fr;gap:16px} 
+      .edu-yr{text-align:left} 
+    } 
+    @media(max-width:640px){ 
+      #statusbar{padding:0 14px;gap:8px; font-size:9px} 
+      .sb-item:nth-child(4){display:none} 
+      nav{padding:0 16px} 
+      .nav-links{display:none} 
+      .si{padding:60px 18px} 
+      .skills-grid{grid-template-columns:1fr} 
+      .blog-grid{grid-template-columns:1fr} 
+      footer{flex-direction:column;text-align:center} 
+    } 
+  </style> 
+</head> 
+<body> 
+<div id="grain"></div> 
+<div id="cur"></div> 
+ 
+<!-- ═══════════════════════════════════ 
+  STATUS BAR 
+═══════════════════════════════════ --> 
+<div id="statusbar"> 
+  <div class="sb-left"> 
+    <span class="sb-item"><span class="sb-dot"></span></span> 
+    <span class="sb-item">⏰ <span id="clock">--:-- --</span></span> 
+    <span class="sb-item">🎂 <span id="bday-count">---</span> <span>days alive</span></span> 
+    <span class="sb-item">👁 <span id="visit-count">---</span> <span>visits</span></span> 
+  </div> 
+  <span>Bengaluru, Karnataka</span> 
+</div> 
+ 
+<!-- ═══════════════════════════════════ 
+  NAV 
+═══════════════════════════════════ --> 
+<nav> 
+  <a href="#" class="nav-logo">RAJEEV<sup>M</sup></a> 
+  <div class="nav-links"> 
+    <a href="#projects">Work</a> 
+    <a href="#about">About</a> 
+    <a href="#writing">Writing</a> 
+    <a href="#github">GitHub</a> 
+    <a href="#contact">Contact</a> 
+  </div> 
+  <div class="nav-right"> 
+    <a href="https://github.com/Srivatsarajeev" target="_blank" 
+       style="color:var(--fg3);font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .2s" 
+       onmouseover="this.style.color='var(--accent)'" 
+       onmouseout="this.style.color='var(--fg3)'"> 
+      GitHub ↗ 
+    </a> 
+  </div> 
+</nav> 
+ 
+<!-- ═══════════════════════════════════ 
+  HERO 
+═══════════════════════════════════ --> 
+<section style="border-bottom:1px solid var(--border)"> 
+  <div class="hero" style="max-width:1160px;margin:0 auto;padding-top:130px"> 
+    <div class="hero-grid"></div> 
+ 
+    <div class="hero-left"> 
+      <div class="hero-tag"> 
+        <span class="sb-dot"></span> 
+        Available for opportunities 
+      </div> 
+      <h1 class="hero-name"> 
+        RAJEEV<br> 
+        <span class="outline">SRIVATSA</span> 
+      </h1> 
+      <p class="hero-subtitle">DevOps · ML · Full-Stack · <em>occasional photographer</em></p> 
+      <p class="hero-bio"> 
+        I make <strong>servers not cry</strong>, <strong>models actually learn</strong>, and UIs not look like 2009. 
+        Currently doing MCA at <strong>BMS Institute of Technology</strong>. 
+        Former <strong>Sports Data Analyst at HUDL</strong>. 
+        Part-time YAML poet, full-time infrastructure overthinker. 
+      </p> 
+      <div class="hero-btns"> 
+        <a href="#projects" class="btn-fill">View Projects ↓</a> 
+        <a href="mailto:rajeevsrivatsa7@gmail.com" class="btn-ghost">Email Me →</a> 
+        <a href="https://github.com/Srivatsarajeev" target="_blank" class="btn-ghost">GitHub ↗</a> 
+      </div> 
+    </div> 
+ 
+    <div class="hero-right"> 
+      <div class="profile-wrap"> 
+        <div class="p-corner-tl"></div> 
+        <div class="p-corner-br"></div> 
+        <div class="profile-img" id="profileImg"> 
+          <!-- PUT YOUR PHOTO: rename your image to "me.jpg" in the same folder --> 
+          <img 
+            src="/profile.jpg" 
+            alt="Rajeev M" 
+            id="profilePhoto" 
+            onerror="document.getElementById('profileImg').innerHTML='<div class=\'no-img\'><span>📸</span><p style=\'font-size:10px;color:var(--fg3);letter-spacing:.1em;text-transform:uppercase;text-align:center\'>Place your photo as<br><strong style=\'color:var(--accent)\'>me.jpg</strong> in this folder</p></div>'" 
+          /> 
+        </div> 
+        <div class="profile-info"> 
+          <div class="profile-name">RAJEEV M</div> 
+          <div class="profile-loc">📍 Bengaluru, Karnataka</div> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  MARQUEE 
+═══════════════════════════════════ --> 
+<div class="marquee-wrap"> 
+  <div class="marquee-track"> 
+    <span>DEVOPS ENGINEER</span><span class="acc">✦</span> 
+    <span>MERN STACK</span><span class="acc">✦</span> 
+    <span>MACHINE LEARNING</span><span class="acc">✦</span> 
+    <span>AWS CLOUD</span><span class="acc">✦</span> 
+    <span>KUBERNETES</span><span class="acc">✦</span> 
+    <span>TERRAFORM</span><span class="acc">✦</span> 
+    <span>SPORTS DATA ANALYST</span><span class="acc">✦</span> 
+    <span>MCA @ BMSIT</span><span class="acc">✦</span> 
+    <span>DEVOPS ENGINEER</span><span class="acc">✦</span> 
+    <span>MERN STACK</span><span class="acc">✦</span> 
+    <span>MACHINE LEARNING</span><span class="acc">✦</span> 
+    <span>AWS CLOUD</span><span class="acc">✦</span> 
+    <span>KUBERNETES</span><span class="acc">✦</span> 
+    <span>TERRAFORM</span><span class="acc">✦</span> 
+    <span>SPORTS DATA ANALYST</span><span class="acc">✦</span> 
+    <span>MCA @ BMSIT</span><span class="acc">✦</span> 
+  </div> 
+</div> 
+ 
+<!-- ═══════════════════════════════════ 
+  ABOUT 
+═══════════════════════════════════ --> 
+<section id="about"> 
+  <div class="si"> 
+    <div class="slabel r">About <em>/ who dis</em></div> 
+    <div class="about-cols"> 
+      <div> 
+        <h2 class="about-h r"> 
+          I build things<br> 
+          that <em>actually</em><br> 
+          work. 
+        </h2> 
+        <div class="pill-row r d1"> 
+          <span class="pill">DevOps</span><span class="pill">ML</span> 
+          <span class="pill">MERN</span><span class="pill">AWS</span> 
+          <span class="pill">Python</span><span class="pill">Linux</span> 
+          <span class="pill">Docker</span><span class="pill">Sports Data</span> 
+        </div> 
+      </div> 
+      <div class="about-body r d1"> 
+        <p>ok real talk — I'm Rajeev. That person who gets irrationally excited at 2am when a <strong>Kubernetes pod finally starts</strong> after an hour of YAML crimes. fully unashamed.</p> 
+        <p>Doing <strong>MCA at BMS Institute of Technology (2025–2027)</strong>. Before that I was a <strong>Sports Data Analyst at HUDL</strong> — yes actual sports, actual data, actual match footage at weird hours.</p> 
+        <p>My brain runs on <strong>Python, Docker, and The Weeknd</strong>. I build ML systems, DevOps pipelines, and MERN apps — sometimes all three in the same project because why not. also I click photos and write blogs when the pipeline is deploying.</p> 
+        <p style="color:#2e2e2e">No I will not stop adding one more service to my docker-compose. it sparks joy ✨</p> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  SKILLS 
+═══════════════════════════════════ --> 
+<section id="skills"> 
+  <div class="si"> 
+    <div class="slabel r">Skills <em>/ the stack</em></div> 
+    <div class="skills-grid r"> 
+      <div class="skill-cell"> 
+        <div class="sc-title">Languages</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">Python</span><span class="sc-tag">JavaScript</span> 
+          <span class="sc-tag">Bash</span><span class="sc-tag">SQL</span><span class="sc-tag">HCL</span><span class="sc-tag">YAML</span> 
+        </div> 
+      </div> 
+      <div class="skill-cell"> 
+        <div class="sc-title">MERN Stack</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">MongoDB</span><span class="sc-tag">Express.js</span> 
+          <span class="sc-tag">React.js</span><span class="sc-tag">Node.js</span><span class="sc-tag">Next.js</span> 
+        </div> 
+      </div> 
+      <div class="skill-cell"> 
+        <div class="sc-title">ML / Data</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">Machine Learning</span><span class="sc-tag">Pandas</span> 
+          <span class="sc-tag">NumPy</span><span class="sc-tag">OpenCV</span> 
+          <span class="sc-tag">Power BI</span><span class="sc-tag">Tableau</span> 
+        </div> 
+      </div> 
+      <div class="skill-cell"> 
+        <div class="sc-title">DevOps</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">Docker</span><span class="sc-tag">Kubernetes</span> 
+          <span class="sc-tag">Jenkins</span><span class="sc-tag">CI/CD</span> 
+          <span class="sc-tag">Terraform</span><span class="sc-tag">Ansible</span><span class="sc-tag">Git</span> 
+        </div> 
+      </div> 
+      <div class="skill-cell"> 
+        <div class="sc-title">AWS Cloud</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">EC2</span><span class="sc-tag">S3</span> 
+          <span class="sc-tag">IAM</span><span class="sc-tag">VPC</span> 
+          <span class="sc-tag">CloudWatch</span><span class="sc-tag">EKS</span><span class="sc-tag">Lambda</span> 
+        </div> 
+      </div> 
+      <div class="skill-cell"> 
+        <div class="sc-title">Monitoring & OS</div> 
+        <div class="sc-items"> 
+          <span class="sc-tag">Prometheus</span><span class="sc-tag">Grafana</span> 
+          <span class="sc-tag">Linux</span><span class="sc-tag">Nginx</span> 
+          <span class="sc-tag">Excel</span><span class="sc-tag">Postman</span> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  PROJECTS 
+═══════════════════════════════════ --> 
+<section id="projects"> 
+  <div class="si"> 
+    <div class="slabel r">Projects <em>/ things I built at 2am</em></div> 
+    <div class="proj-list"> 
+ 
+      <!-- Vidyut --> 
+      <div class="proj r"> 
+        <div class="proj-n">01</div> 
+        <div> 
+          <span class="proj-emoji">⚡</span> 
+          <div class="proj-title">Vidyut — Energy Analytics Platform</div> 
+          <div class="proj-tag-label prob-label">The Problem</div> 
+          <p class="proj-text">Energy consumption data is scattered, unstructured, and not used efficiently — leading to wastage and poor optimization across facilities.</p> 
+          <div class="proj-tag-label sol-label">The Solution</div> 
+          <p class="proj-text">A cloud-based analytics platform that collects smart meter data, applies ML models, and provides actionable insights to optimize energy usage and cut costs.</p> 
+          <div class="proj-chips"> 
+            <span class="proj-chip">Python</span><span class="proj-chip">ML</span> 
+            <span class="proj-chip">AWS</span><span class="proj-chip">React</span><span class="proj-chip">Smart Meters</span> 
+          </div> 
+        </div> 
+        <div class="proj-meta"> 
+          <div class="proj-status">Ongoing</div> 
+          <div style="font-size:9px;color:var(--fg3);line-height:1.8">Cloud · ML · Analytics</div> 
+        </div> 
+      </div> 
+ 
+      <!-- Garuda / Jeeva Rakshaka --> 
+      <div class="proj r d1"> 
+        <div class="proj-n">02</div> 
+        <div> 
+          <span class="proj-emoji">🦅</span> 
+          <div class="proj-title">Garuda — Soldier Monitoring System</div> 
+          <div class="proj-tag-label prob-label">The Problem</div> 
+          <p class="proj-text">Lack of real-time monitoring and response in critical defense/emergency environments — causing delayed action and risk to human lives.</p> 
+          <div class="proj-tag-label sol-label">The Solution</div> 
+          <p class="proj-text">An intelligent system that tracks soldier vitals and location in real time, enabling faster decision-making and improving safety in high-risk scenarios.</p> 
+          <div class="proj-chips"> 
+            <span class="proj-chip">IoT</span><span class="proj-chip">Real-time</span> 
+            <span class="proj-chip">Node.js</span><span class="proj-chip">Maps API</span><span class="proj-chip">Alerts</span> 
+          </div> 
+        </div> 
+        <div class="proj-meta"> 
+          <div class="proj-status">Ongoing</div> 
+          <div style="font-size:9px;color:var(--fg3);line-height:1.8">Real-time · Defense · Safety</div> 
+        </div> 
+      </div> 
+ 
+      <!-- CI/CD Kubernetes --> 
+      <div class="proj r d2"> 
+        <div class="proj-n">03</div> 
+        <div> 
+          <span class="proj-emoji">🔁</span> 
+          <div class="proj-title">CI/CD Kubernetes Monitoring System</div> 
+          <div class="proj-tag-label prob-label">The Problem</div> 
+          <p class="proj-text">Manual deployments break things. No visibility into what's running, what's broken, and why the pod crashed at 3am on a Friday.</p> 
+          <div class="proj-tag-label sol-label">The Solution</div> 
+          <p class="proj-text">End-to-end CI/CD pipeline with Docker containerization, Kubernetes orchestration, and full observability through Prometheus + Grafana dashboards.</p> 
+          <div class="proj-chips"> 
+            <span class="proj-chip">Docker</span><span class="proj-chip">Kubernetes</span> 
+            <span class="proj-chip">Prometheus</span><span class="proj-chip">Grafana</span><span class="proj-chip">CI/CD</span> 
+          </div> 
+        </div> 
+        <div class="proj-meta"> 
+          <div class="proj-status">Ongoing</div> 
+          <div style="font-size:9px;color:var(--fg3);line-height:1.8">DevOps · Infra · Monitoring</div> 
+        </div> 
+      </div> 
+ 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  EXPERIENCE 
+═══════════════════════════════════ --> 
+<section id="experience"> 
+  <div class="si"> 
+    <div class="slabel r">Experience <em>/ places I didn't get fired from</em></div> 
+    <div> 
+      <div class="exp-row r"> 
+        <div class="exp-meta">2023 – 2024<br>Internship<br>📍 Remote</div> 
+        <div> 
+          <div class="exp-co">HUDL</div> 
+          <div class="exp-role">Sports Data Analyst</div> 
+          <ul class="exp-bullets"> 
+            <li>Analyzed player and team performance data using sports analytics tools and video analysis platforms</li> 
+            <li>Tagged and reviewed match footage to extract key performance metrics</li> 
+            <li>Built visual reports and dashboards to communicate insights effectively</li> 
+            <li>Identified trends and patterns to support coaching decisions and performance optimization</li> 
+            <li>Worked with structured and unstructured data using Python and data analysis libraries</li> 
+          </ul> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  EDUCATION 
+═══════════════════════════════════ --> 
+<section id="education"> 
+  <div class="si"> 
+    <div class="slabel r">Education <em>/ still learning, always will be</em></div> 
+    <div class="edu-block r"> 
+      <div> 
+        <div class="edu-school">BMS Institute of Technology</div> 
+        <div class="edu-degree">Master of Computer Applications (MCA)</div> 
+        <div style="margin-top:12px"> 
+          <span class="edu-badge">Nov 2025 – 2027</span> 
+          <span class="edu-badge" style="margin-left:8px">Bengaluru, Karnataka</span> 
+        </div> 
+      </div> 
+      <div class="edu-yr">MCA</div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  GITHUB HEATMAP 
+═══════════════════════════════════ --> 
+<section id="github"> 
+  <div class="si"> 
+    <div class="slabel r">GitHub Activity <em>/ commit history or therapy — same thing</em></div> 
+    <div class="gh-wrap r"> 
+      <div class="gh-header"> 
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg2)" stroke-width="1.5"> 
+          <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/> 
+        </svg> 
+        <span class="gh-title">Srivatsarajeev · <span class="gh-user">github.com/Srivatsarajeev</span></span> 
+      </div> 
+      <div id="heatmap-container"></div> 
+      <div class="hm-legend"> 
+        <span>Less</span> 
+        <div class="hm-legend-sq" style="background:var(--border2)"></div> 
+        <div class="hm-legend-sq" style="background:#0e4429"></div> 
+        <div class="hm-legend-sq" style="background:#006d32"></div> 
+        <div class="hm-legend-sq" style="background:#26a641"></div> 
+        <div class="hm-legend-sq" style="background:#39d353"></div> 
+        <span>More</span> 
+      </div> 
+      <p class="gh-note"> 
+        Live heatmap powered by the GitHub contributions API via 
+        <a href="https://github.com/Srivatsarajeev" target="_blank">github.com/Srivatsarajeev</a>. 
+        For a fully live heatmap, connect <a href="https://github-contributions-api.jogruber.de" target="_blank">github-contributions-api</a> or use the official GitHub GraphQL API with a personal token. 
+      </p> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  MUSIC / SPOTIFY 
+═══════════════════════════════════ --> 
+<section id="music"> 
+  <div class="si"> 
+    <div class="slabel r">Music <em>/ what's on repeat rn</em></div> 
+    <div class="music-wrap"> 
+      <a 
+        href="https://open.spotify.com/track/7MXVkk9YMctZqd1Srtv4MB" 
+        target="_blank" rel="noopener" 
+        class="spotify-card r" 
+      > 
+        <div class="spot-alb"> 
+          <img src="https://i.scdn.co/image/ab67616d0000b2734718e2b124f79258be7bc452" alt="Starboy" onerror="this.parentElement.textContent='⭐'"/> 
+        </div> 
+        <div> 
+          <div class="spot-now">♫ Favourite Track</div> 
+          <div class="spot-song">Starboy</div> 
+          <div class="spot-artist">The Weeknd ft. Daft Punk</div> 
+          <div class="spot-bars"> 
+            <div class="sb"></div><div class="sb"></div> 
+            <div class="sb"></div><div class="sb"></div> 
+            <div class="sb"></div> 
+          </div> 
+        </div> 
+        <div class="spot-play"> 
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg> 
+        </div> 
+      </a> 
+      <div class="music-txt r d1"> 
+        <h3>This plays at<br>every deploy.</h3> 
+        <p>Click to open on Spotify. Green checkmark in CI + Starboy playing = life is genuinely good.</p> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  WRITING / BLOGS 
+═══════════════════════════════════ --> 
+<section id="writing"> 
+  <div class="si"> 
+    <div class="slabel r">Writing <em>/ sometimes I write. read if u want 🖋</em></div> 
+    <p class="blog-sub r">Thoughts from a sleep-deprived engineer. No clickbait. Mostly.</p> 
+    <div class="blog-grid"> 
+      <!-- Update href with your actual blog post URLs --> 
+      <a href="#" class="blog-card r d1"> 
+        <div class="blog-date">DevOps · 8 min read</div> 
+        <div class="blog-title">Why Your CI/CD Pipeline Is Lying To You</div> 
+        <p class="blog-desc">That green checkmark doesn't mean what you think. A dive into false confidence in automated pipelines.</p> 
+        <span class="blog-more">Read →</span> 
+      </a> 
+      <a href="#" class="blog-card r d2"> 
+        <div class="blog-date">ML · 12 min read</div> 
+        <div class="blog-title">Training a Model That Actually Works in Production</div> 
+        <p class="blog-desc">Spoiler: your Jupyter accuracy doesn't matter. Here's what actually does.</p> 
+        <span class="blog-more">Read →</span> 
+      </a> 
+      <a href="#" class="blog-card r d3"> 
+        <div class="blog-date">Sports Data · 6 min read</div> 
+        <div class="blog-title">Sports Analytics Taught Me More Than School Did</div> 
+        <p class="blog-desc">My time at HUDL, what real sports data looks like, and why messy data is always the vibe.</p> 
+        <span class="blog-more">Read →</span> 
+      </a> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  VISIT COUNTER + BIRTHDAY 
+═══════════════════════════════════ --> 
+<section id="visits"> 
+  <div class="si"> 
+    <div class="slabel r">Reach <em>/ people who found this place</em></div> 
+    <div class="visit-big-wrap r"> 
+      <div> 
+        <div class="visit-big-num" id="visitBigNum">—</div> 
+        <div class="visit-big-label">Profile Visits</div> 
+      </div> 
+      <div class="visit-right r d1"> 
+        <h3>You're not alone<br>in being nosy.</h3> 
+        <p>Every visit counts — literally. This ticks up each time someone lands here. Welcome to the club.</p> 
+        <div class="bday-strip"> 
+          <div class="bday-chip">🎂 Born <strong id="bdayFmt">14 May 2003</strong></div> 
+          <div class="bday-chip">🗓 <strong id="daysOld">—</strong> days on this planet</div> 
+          <div class="bday-chip">🎉 Next bday in <strong id="nextBday">—</strong> days</div> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- ═══════════════════════════════════ 
+  CONTACT / SOCIALS 
+═══════════════════════════════════ --> 
+<section id="contact"> 
+  <div class="si"> 
+    <div class="slabel r">Contact <em>/ don't be a stranger</em></div> 
+    <h2 class="contact-big r"> 
+      LET'S<br> 
+      <span class="contact-ghost">BUILD</span><br> 
+      SOMETHING. 
+    </h2> 
+    <div class="social-row r d1"> 
+ 
+      <!-- Email --> 
+      <a href="mailto:rajeevsrivatsa7@gmail.com" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <rect x="2" y="4" width="20" height="16" rx="2"/> 
+          <path d="m2 7 10 7 10-7"/> 
+        </svg> 
+        Email 
+      </a> 
+ 
+      <!-- GitHub --> 
+      <a href="https://github.com/Srivatsarajeev" target="_blank" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/> 
+        </svg> 
+        GitHub 
+      </a> 
+ 
+      <!-- LinkedIn --> 
+      <a href="https://www.linkedin.com/in/rajeev-srivatsa-456a751a5" target="_blank" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <rect x="2" y="2" width="20" height="20" rx="5"/> 
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/> 
+          <rect x="2" y="9" width="4" height="12"/> 
+          <circle cx="4" cy="4" r="2"/> 
+        </svg> 
+        LinkedIn 
+      </a> 
+ 
+      <!-- Instagram --> 
+      <a href="https://www.instagram.com/r_srivatsaa?igsh=MXRtend3ZW9rdGxjbQ==" target="_blank" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <rect x="2" y="2" width="20" height="20" rx="5"/> 
+          <circle cx="12" cy="12" r="4"/> 
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/> 
+        </svg> 
+        Instagram 
+      </a> 
+ 
+      <!-- Letterboxd --> 
+      <a href="https://boxd.it/7jSIX" target="_blank" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <rect x="2" y="4" width="20" height="16" rx="3"/> 
+          <circle cx="8" cy="12" r="3"/> 
+          <circle cx="16" cy="12" r="3"/> 
+          <circle cx="12" cy="12" r="3"/> 
+        </svg> 
+        Letterboxd 
+      </a> 
+ 
+      <!-- Spotify --> 
+      <a href="https://open.spotify.com/track/7MXVkk9YMctZqd1Srtv4MB" target="_blank" class="soc-btn"> 
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"> 
+          <circle cx="12" cy="12" r="10"/> 
+          <path d="M8 13s1.5-1 4-1 4 1 4 1M7 10s2-1.5 5-1.5S17 10 17 10M9 16s1-1 3-1 3 1 3 1"/> 
+        </svg> 
+        Spotify 
+      </a> 
+ 
+    </div> 
+  </div> 
+</section> 
+ 
+<footer> 
+  <span>© 2026 Rajeev M · Bengaluru · rajeevsrivatsa7@gmail.com</span> 
+  <span style="color:var(--fg3)">MCA @ BMSIT · DevOps · ML · MERN</span> 
+</footer> 
+ 
+<!-- ═══════════════════════════════════ 
+  SCRIPTS 
+═══════════════════════════════════ --> 
+<script> 
+  /* ── Cursor ── */ 
+  const cur = document.getElementById('cur'); 
+  document.addEventListener('mousemove', e => { 
+    cur.style.left = e.clientX + 'px'; 
+    cur.style.top  = e.clientY + 'px'; 
+  }); 
+  document.querySelectorAll('a, button').forEach(el => { 
+    el.addEventListener('mouseenter', () => cur.classList.add('lnk')); 
+    el.addEventListener('mouseleave', () => cur.classList.remove('lnk')); 
+  }); 
+  document.querySelectorAll('.proj, .blog-card, .sc-tag, .pill').forEach(el => { 
+    el.addEventListener('mouseenter', () => cur.classList.add('hov')); 
+    el.addEventListener('mouseleave', () => cur.classList.remove('hov')); 
+  }); 
+ 
+  /* ── Scroll reveal ── */ 
+  const obs = new IntersectionObserver(entries => { 
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } }); 
+  }, { threshold: 0.06 }); 
+  document.querySelectorAll('.r').forEach(el => obs.observe(el)); 
+ 
+  /* ── Clock ── */ 
+  function updateClock() { 
+    const now  = new Date(); 
+    let h      = now.getHours(); 
+    const m    = String(now.getMinutes()).padStart(2,'0'); 
+    const ampm = h >= 12 ? 'pm' : 'am'; 
+    h = h % 12 || 12; 
+    document.getElementById('clock').textContent = h + ':' + m + ' ' + ampm; 
+  } 
+  updateClock(); 
+  setInterval(updateClock, 1000); 
+ 
+  /* ── Birthday counter ── */ 
+  function bdayCalc() { 
+    const bday  = new Date(2003, 4, 14); // 14 May 2003 (month is 0-indexed) 
+    const now   = new Date(); 
+    const diff  = Math.floor((now - bday) / (1000 * 60 * 60 * 24)); 
+    document.getElementById('bday-count').textContent = diff.toLocaleString('en-IN'); 
+    document.getElementById('daysOld').textContent    = diff.toLocaleString('en-IN'); 
+    // next birthday 
+    let nextBday = new Date(now.getFullYear(), 4, 14); 
+    if (nextBday <= now) nextBday = new Date(now.getFullYear() + 1, 4, 14); 
+    const daysToNext = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24)); 
+    document.getElementById('nextBday').textContent = daysToNext; 
+  } 
+  bdayCalc(); 
+ 
+  /* ── Visit counter ── */ 
+  function getVisits() { 
+    let v = parseInt(localStorage.getItem('rajeev_v') || '0'); 
+    if (!sessionStorage.getItem('rajeev_counted')) { 
+      v++; 
+      localStorage.setItem('rajeev_v', v); 
+      sessionStorage.setItem('rajeev_counted', '1'); 
+    } 
+    return v; 
+  } 
+  function fmt(n) { return n.toLocaleString('en-IN'); } 
+  const visits = getVisits(); 
+  document.getElementById('visit-count').textContent = fmt(visits); 
+ 
+  /* animated count-up for big number */ 
+  function countUp(el, target, ms = 1800) { 
+    let s = 0; const step = target / (ms / 16); 
+    const t = setInterval(() => { 
+      s = Math.min(s + step, target); 
+      el.textContent = fmt(Math.floor(s)); 
+      if (s >= target) clearInterval(t); 
+    }, 16); 
+  } 
+  const vObs = new IntersectionObserver(entries => { 
+    entries.forEach(e => { 
+      if (e.isIntersecting) { 
+        countUp(document.getElementById('visitBigNum'), visits); 
+        vObs.unobserve(e.target); 
+      } 
+    }); 
+  }, { threshold: 0.3 }); 
+  vObs.observe(document.getElementById('visits')); 
+ 
+  /* ── GitHub heatmap (generated, replace with API in prod) ── */ 
+  (function buildHeatmap() { 
+    const container = document.getElementById('heatmap-container'); 
+    const weeks = 52; 
+    const today = new Date(); 
+ 
+    for (let w = 0; w < weeks; w++) { 
+      const weekEl = document.createElement('div'); 
+      weekEl.className = 'hm-week'; 
+      for (let d = 0; d < 7; d++) { 
+        const dayEl = document.createElement('div'); 
+        dayEl.className = 'hm-day'; 
+        // Simulate contribution levels — replace with real API data 
+        const rand = Math.random(); 
+        if (rand > 0.75) { 
+          const lvl = Math.ceil((rand - 0.75) / 0.25 * 4); 
+          if (lvl === 1) dayEl.classList.add('l1'); 
+          else if (lvl === 2) dayEl.classList.add('l2'); 
+          else if (lvl === 3) dayEl.classList.add('l3'); 
+          else dayEl.classList.add('l4'); 
+        } 
+        // tooltip 
+        const daysBack = (weeks - w) * 7 + (7 - d); 
+        const cellDate = new Date(today); 
+        cellDate.setDate(today.getDate() - daysBack); 
+        dayEl.title = cellDate.toDateString(); 
+        weekEl.appendChild(dayEl); 
+      } 
+      container.appendChild(weekEl); 
+    } 
+  })(); 
+ 
+  /* ── To connect real GitHub API, replace the heatmap function above with: 
+    fetch('https://github-contributions-api.jogruber.de/v4/Srivatsarajeev') 
+      .then(r => r.json()) 
+      .then(data => { ... map data.contributions to hm-day cells }) 
+── */ 
+</script> 
+</body> 
 </html>
