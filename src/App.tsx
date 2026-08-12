@@ -22,6 +22,88 @@ const LANGUAGES = [
 
 const PreloadContext = createContext(true);
 
+// Live Clock for corner status
+function LiveClock() {
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString("en-US", { 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span>{time}</span>;
+}
+
+// Letter-by-letter typographic reveal for headers
+function AnimatedHeader({ text }: { text: string }) {
+  const letters = Array.from(text);
+  
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.04, delayChildren: 0.1 },
+    },
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring" as const,
+        damping: 15,
+        stiffness: 150,
+      },
+    },
+    hidden: {
+      opacity: 0,
+      y: 8,
+    },
+  };
+
+  return (
+    <motion.h2
+      variants={container}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-60px" }}
+      className="font-serif italic text-base text-zinc-400 flex select-none"
+    >
+      {letters.map((letter, index) => (
+        <motion.span key={index} variants={child}>
+          {letter === " " ? "\u00A0" : letter}
+        </motion.span>
+      ))}
+    </motion.h2>
+  );
+}
+
+// Slide underline link component
+function UnderlineLink({ href, children, target, rel, className = "" }: { href: string; children: React.ReactNode; target?: string; rel?: string; className?: string }) {
+  return (
+    <a 
+      href={href} 
+      target={target} 
+      rel={rel} 
+      className={`relative group inline-block overflow-hidden pb-0.5 ${className}`}
+    >
+      <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[1px]">{children}</span>
+      <span className="absolute bottom-0 left-0 w-full h-[1px] bg-zinc-400 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+    </a>
+  );
+}
+
 // Preloader Component
 function Preloader({ onComplete }: { onComplete: () => void }) {
   const [index, setIndex] = useState(0);
@@ -98,6 +180,47 @@ function ScrollReveal({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.div>
+  );
+}
+
+// Project Card with animated arrow on hover
+function ProjectCard({ p }: { p: { title: string; problem: string; solution: string; tech: string; status: string; meta: string } }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div 
+      className="space-y-4 group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="flex justify-between items-baseline pb-2">
+        <h3 className="text-sm font-medium text-white font-sans flex items-center gap-2">
+          <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+            {p.title}
+          </span>
+          <motion.span 
+            initial={{ opacity: 0, x: -4 }}
+            animate={isHovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -4 }}
+            transition={{ duration: 0.2 }}
+            className="text-zinc-500 text-xs"
+          >
+            →
+          </motion.span>
+        </h3>
+        <span className="font-sans text-[10px] text-zinc-500 uppercase tracking-widest">{p.status}</span>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-2 md:gap-4 text-xs leading-relaxed font-sans">
+        <div className="font-sans text-[10px] text-zinc-500 uppercase tracking-wider">{p.meta}</div>
+        <div className="space-y-3 text-zinc-400">
+          <p><span className="text-zinc-200 font-medium font-sans">Problem:</span> {p.problem}</p>
+          <p><span className="text-zinc-200 font-medium font-sans">Solution:</span> {p.solution}</p>
+          <p className="text-gray-400 font-sans text-xs tracking-wide pt-1">
+            {p.tech}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -195,13 +318,53 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* ── EDITORIAL FRAME ── */}
+      <div className="fixed inset-4 sm:inset-8 border border-zinc-800/20 pointer-events-none z-40 select-none">
+        {/* Corner Brackets */}
+        <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-zinc-700/30 -mt-[1px] -ml-[1px]" />
+        <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-zinc-700/30 -mt-[1px] -mr-[1px]" />
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-zinc-700/30 -mb-[1px] -ml-[1px]" />
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-zinc-700/30 -mb-[1px] -mr-[1px]" />
+
+        {/* Dynamic Labels */}
+        <div className="absolute top-3 left-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
+          <span>Rajeev Srivatsa</span>
+          <span className="text-zinc-800">•</span>
+          <span>13.029° N, 77.541° E</span>
+        </div>
+
+        <div className="absolute top-3 right-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
+          <span>UTC+5:30</span>
+          <span className="text-zinc-800">•</span>
+          <LiveClock />
+        </div>
+
+        <div className="absolute bottom-3 left-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
+          <span>System Status: Active</span>
+        </div>
+
+        <div className="absolute bottom-3 right-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
+          <span>Portfolio V1.0</span>
+        </div>
+      </div>
+
+      {/* ── BACKGROUND LAYOUT GUIDES ── */}
+      <div className="fixed inset-0 flex justify-center pointer-events-none -z-10 select-none">
+        <div className="w-full max-w-2xl h-full border-l border-r border-zinc-900/10" />
+      </div>
+
       <div className="max-w-2xl mx-auto px-6 py-24 space-y-24">
         
         {/* ── HERO SECTION ── */}
         <ScrollReveal>
           <section className="space-y-8">
             <div className="flex flex-col sm:flex-row gap-8 items-start">
-              <div className="w-24 h-32 flex-shrink-0 bg-zinc-900 overflow-hidden">
+              <motion.div 
+                className="w-24 h-32 flex-shrink-0 bg-zinc-900 overflow-hidden"
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={!isPreloading ? { scale: 1, opacity: 1 } : {}}
+                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+              >
                 <img 
                   src="/profile.jpg" 
                   alt="Rajeev Srivatsa" 
@@ -217,7 +380,7 @@ export default function App() {
                     }
                   }}
                 />
-              </div>
+              </motion.div>
               
               <div className="space-y-4 flex-1">
                 <div className="space-y-2">
@@ -234,15 +397,15 @@ export default function App() {
                 </p>
                 
                 <div className="flex flex-wrap gap-4 text-[10px] tracking-widest font-sans uppercase">
-                  <a href="#projects" className="text-zinc-500 hover:text-white transition-colors">
+                  <UnderlineLink href="#projects" className="text-zinc-500 hover:text-white transition-colors">
                     View Projects ↓
-                  </a>
-                  <a href="mailto:rajeevsrivatsa7@gmail.com" className="text-zinc-500 hover:text-white transition-colors">
+                  </UnderlineLink>
+                  <UnderlineLink href="mailto:rajeevsrivatsa7@gmail.com" className="text-zinc-500 hover:text-white transition-colors">
                     Email Me →
-                  </a>
-                  <a href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors">
+                  </UnderlineLink>
+                  <UnderlineLink href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors">
                     GitHub ↗
-                  </a>
+                  </UnderlineLink>
                 </div>
               </div>
             </div>
@@ -252,7 +415,7 @@ export default function App() {
         {/* ── ABOUT SECTION ── */}
         <ScrollReveal>
           <section id="about" className="space-y-4">
-            <h2 className="font-serif italic text-base text-zinc-400">about.</h2>
+            <AnimatedHeader text="about." />
             <div className="space-y-4">
               <h3 className="text-base font-medium text-white leading-snug font-sans">
                 I build things that actually work.
@@ -279,7 +442,7 @@ export default function App() {
         {/* ── SKILLS SECTION ── */}
         <ScrollReveal>
           <section id="skills" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">skills.</h2>
+            <AnimatedHeader text="skills." />
             <div className="space-y-2 pt-2">
               {[
                 {
@@ -323,7 +486,7 @@ export default function App() {
         {/* ── PROJECTS ── */}
         <ScrollReveal>
           <section id="projects" className="space-y-12">
-            <h2 className="font-serif italic text-base text-zinc-400">projects.</h2>
+            <AnimatedHeader text="projects." />
 
             <div className="space-y-16">
               {[
@@ -352,23 +515,7 @@ export default function App() {
                   meta: "NLP · Visualization · Linguistics"
                 }
               ].map((p) => (
-                <div key={p.title} className="space-y-4">
-                  <div className="flex justify-between items-baseline pb-2">
-                    <h3 className="text-sm font-medium text-white font-sans">{p.title}</h3>
-                    <span className="font-sans text-[10px] text-zinc-500 uppercase tracking-widest">{p.status}</span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-2 md:gap-4 text-xs leading-relaxed font-sans">
-                    <div className="font-sans text-[10px] text-zinc-500 uppercase tracking-wider">{p.meta}</div>
-                    <div className="space-y-3 text-zinc-400">
-                      <p><span className="text-zinc-200 font-medium font-sans">Problem:</span> {p.problem}</p>
-                      <p><span className="text-zinc-200 font-medium font-sans">Solution:</span> {p.solution}</p>
-                      <p className="text-gray-400 font-sans text-xs tracking-wide pt-1">
-                        {p.tech}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <ProjectCard key={p.title} p={p} />
               ))}
             </div>
           </section>
@@ -377,7 +524,7 @@ export default function App() {
         {/* ── EXPERIENCE ── */}
         <ScrollReveal>
           <section id="experience" className="space-y-8">
-            <h2 className="font-serif italic text-base text-zinc-400">experience.</h2>
+            <AnimatedHeader text="experience." />
 
             <div className="space-y-2">
               <div className="flex justify-between items-baseline">
@@ -396,7 +543,7 @@ export default function App() {
                   "Identified trends and patterns to support coaching decisions and performance optimization",
                   "Worked with structured and unstructured data using Python and data analysis libraries"
                 ].map((bullet, index) => (
-                  <li key={index} className="flex gap-2 items-start">
+                  <li key={index} className="flex gap-2 items-start font-sans">
                     <span className="text-zinc-600 mt-0.5">•</span>
                     <span>{bullet}</span>
                   </li>
@@ -409,7 +556,7 @@ export default function App() {
         {/* ── EDUCATION ── */}
         <ScrollReveal>
           <section id="education" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">education.</h2>
+            <AnimatedHeader text="education." />
 
             <div className="space-y-2">
               <div className="flex justify-between items-baseline">
@@ -427,7 +574,7 @@ export default function App() {
         {/* ── GITHUB ACTIVITY ── */}
         <ScrollReveal>
           <section id="github" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">github.</h2>
+            <AnimatedHeader text="github." />
 
             <div className="space-y-4 text-xs font-sans">
               <div className="text-[10px] text-zinc-500 font-sans">
@@ -465,7 +612,7 @@ export default function App() {
         {/* ── MUSIC ── */}
         <ScrollReveal>
           <section id="music" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">music.</h2>
+            <AnimatedHeader text="music." />
 
             <div className="flex flex-col sm:flex-row gap-6 items-center">
               <a 
@@ -500,7 +647,7 @@ export default function App() {
         {/* ── PHOTOS GALLERY ── */}
         <ScrollReveal>
           <section id="photos" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">photos.</h2>
+            <AnimatedHeader text="photos." />
 
             <div className="space-y-4">
               <p className="text-xs font-serif italic text-zinc-500">captured chaos. zero planning. pure luck.</p>
@@ -520,7 +667,7 @@ export default function App() {
                       <img 
                         src={img} 
                         alt="Rajeev photography" 
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                        className="w-full h-full object-cover grayscale hover:grayscale-0 scale-100 hover:scale-105 transition-all duration-700 ease-out"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                           e.currentTarget.parentElement?.style.setProperty("display", "none");
@@ -546,7 +693,7 @@ export default function App() {
         {/* ── REACH SECTION ── */}
         <ScrollReveal>
           <section ref={visitSectionRef} id="reach" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">reach.</h2>
+            <AnimatedHeader text="reach." />
 
             <div className="flex flex-col sm:flex-row gap-6 items-baseline justify-between">
               <div className="space-y-1">
@@ -577,7 +724,7 @@ export default function App() {
         {/* ── CONTACT SECTION ── */}
         <ScrollReveal>
           <section id="contact" className="space-y-8">
-            <h2 className="font-serif italic text-base text-zinc-400">contact.</h2>
+            <AnimatedHeader text="contact." />
 
             <div className="space-y-6">
               <h3 className="text-3xl font-medium tracking-tight text-white leading-none font-sans">
@@ -652,16 +799,18 @@ export default function App() {
                     )
                   }
                 ].map((soc) => (
-                  <a 
+                  <motion.a 
                     key={soc.label}
                     href={soc.href}
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-white transition-opacity hover:opacity-80"
+                    className="text-zinc-500 hover:text-white"
                     title={soc.label}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
                     {soc.icon}
-                  </a>
+                  </motion.a>
                 ))}
               </div>
             </div>
