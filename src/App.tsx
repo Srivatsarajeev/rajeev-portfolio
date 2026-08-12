@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Hardcoded photos list mapping exactly to the public/photos folder to prevent 404s
@@ -11,41 +11,44 @@ const PHOTOS_LIST = [
   "31.jpg.jpg"
 ].map(name => `/photos/${name}`);
 
-const GREETINGS = [
+const LANGUAGES = [
   "• Hello",       // English
-  "• नमस्ते",       // Hindi
-  "• Hallå",       // Swedish
-  "• Hola",        // Spanish
   "• Bonjour",     // French
-  "• Ciao",        // Italian
-  "• Konnichiwa",  // Japanese
-  "• Annyeong",    // Korean
-  "• Ni Hao",      // Chinese
-  "• Olá"          // Portuguese
+  "• Hola",        // Spanish
+  "• こんにちは",   // Japanese
+  "• नमस्ते",       // Hindi
+  "• ನಮಸ್ಕಾರ"      // Kannada
 ];
-
-import { createContext, useContext } from "react";
 
 const PreloadContext = createContext(true);
 
 // Preloader Component
 function Preloader({ onComplete }: { onComplete: () => void }) {
   const [index, setIndex] = useState(0);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    if (index >= GREETINGS.length - 1) {
-      const timeout = setTimeout(() => {
-        onComplete();
-      }, 180);
-      return () => clearTimeout(timeout);
+    if (index < LANGUAGES.length - 1) {
+      const timer = setTimeout(() => {
+        setIndex((prev) => prev + 1);
+      }, 400);
+      return () => clearTimeout(timer);
+    } else {
+      const timer = setTimeout(() => {
+        setShowWelcome(true);
+      }, 400);
+      return () => clearTimeout(timer);
     }
+  }, [index]);
 
-    const interval = setInterval(() => {
-      setIndex((prev) => prev + 1);
-    }, 180);
-
-    return () => clearInterval(interval);
-  }, [index, onComplete]);
+  useEffect(() => {
+    if (showWelcome) {
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcome, onComplete]);
 
   return (
     <motion.div
@@ -55,16 +58,29 @@ function Preloader({ onComplete }: { onComplete: () => void }) {
       transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
     >
       <AnimatePresence mode="wait">
-        <motion.div 
-          key={index}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.08 }}
-          className="text-2xl sm:text-3xl font-medium tracking-tight font-sans"
-        >
-          {GREETINGS[index]}
-        </motion.div>
+        {!showWelcome ? (
+          <motion.div
+            key={`lang-${index}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.15, ease: [0.25, 1, 0.5, 1] }}
+            className="text-2xl sm:text-3xl font-medium tracking-tight font-sans text-center"
+          >
+            {LANGUAGES[index]}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="welcome"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+            className="text-2xl sm:text-3xl font-medium tracking-tight font-sans text-center text-zinc-100"
+          >
+            welcome to vatsa world
+          </motion.div>
+        )}
       </AnimatePresence>
     </motion.div>
   );
@@ -184,28 +200,19 @@ export default function App() {
         {/* ── HERO SECTION ── */}
         <ScrollReveal>
           <section className="space-y-8">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-medium tracking-tight text-white font-sans">
-                Rajeev Srivatsa
-              </h1>
-              <p className="text-xs font-serif italic text-zinc-500 tracking-wide">
-                DevOps · ML · Full-Stack · occasional photographer
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-              <div className="w-24 h-32 flex-shrink-0 bg-zinc-900 rounded overflow-hidden shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-8 items-start">
+              <div className="w-24 h-32 flex-shrink-0 bg-zinc-900 overflow-hidden">
                 <img 
                   src="/profile.jpg" 
                   alt="Rajeev Srivatsa" 
-                  className="w-full h-full object-cover grayscale"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                     const parent = e.currentTarget.parentElement;
                     if (parent) {
                       const fallback = document.createElement("div");
-                      fallback.className = "w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-600 text-[10px] text-center p-2 uppercase tracking-widest font-mono";
-                      fallback.textContent = "Rajeev M";
+                      fallback.className = "w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-600 text-[10px] text-center p-2 uppercase tracking-widest font-sans";
+                      fallback.textContent = "Rajeev Srivatsa";
                       parent.appendChild(fallback);
                     }
                   }}
@@ -213,11 +220,20 @@ export default function App() {
               </div>
               
               <div className="space-y-4 flex-1">
-                <p className="text-zinc-400 text-xs sm:text-[13px] leading-relaxed">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-medium tracking-tight text-white font-sans">
+                    Rajeev Srivatsa
+                  </h1>
+                  <p className="text-xs font-serif italic text-zinc-500 tracking-wide">
+                    DevOps · ML · Full-Stack · occasional photographer
+                  </p>
+                </div>
+                
+                <p className="text-zinc-400 text-xs sm:text-[13px] leading-relaxed font-sans">
                   I make servers not cry, models actually learn, and UIs not look like 2009. Currently doing MCA at BMS Institute of Technology. Former Sports Data Analyst at HUDL. Part-time YAML poet, full-time infrastructure overthinker.
                 </p>
                 
-                <div className="flex flex-wrap gap-4 text-[10px] tracking-widest font-mono uppercase">
+                <div className="flex flex-wrap gap-4 text-[10px] tracking-widest font-sans uppercase">
                   <a href="#projects" className="text-zinc-500 hover:text-white transition-colors">
                     View Projects ↓
                   </a>
@@ -238,7 +254,7 @@ export default function App() {
           <section id="about" className="space-y-4">
             <h2 className="font-serif italic text-base text-zinc-400">about.</h2>
             <div className="space-y-4">
-              <h3 className="text-base font-medium text-white leading-snug">
+              <h3 className="text-base font-medium text-white leading-snug font-sans">
                 I build things that actually work.
               </h3>
               
@@ -252,8 +268,8 @@ export default function App() {
                 <p>
                   My brain runs on Python, Docker, and The Weeknd. I build ML systems, DevOps pipelines, and MERN apps — sometimes all three in the same project because why not. also I click photos and write blogs when the pipeline is deploying.
                 </p>
-                <p className="font-mono text-[10px] text-zinc-500">
-                  No I will not stop adding one more service to my docker-compose. it sparks joy ✨
+                <p className="text-[10px] text-zinc-500 font-sans">
+                  No I will not stop adding one more service to my docker-compose. It sparks joy.
                 </p>
               </div>
             </div>
@@ -264,7 +280,7 @@ export default function App() {
         <ScrollReveal>
           <section id="skills" className="space-y-6">
             <h2 className="font-serif italic text-base text-zinc-400">skills.</h2>
-            <div className="space-y-6 pt-2">
+            <div className="space-y-2 pt-2">
               {[
                 {
                   title: "Languages",
@@ -291,12 +307,12 @@ export default function App() {
                   skills: ["Prometheus", "Grafana", "Linux", "Nginx", "Excel", "Postman"]
                 }
               ].map((cat, idx) => (
-                <div key={idx} className="space-y-1 py-2">
-                  <div className="text-[10px] tracking-wider text-zinc-500 uppercase font-mono font-medium">
+                <div key={idx} className="space-y-2 py-3">
+                  <div className="text-[11px] tracking-wider text-zinc-500 uppercase font-sans font-medium">
                     {cat.title}
                   </div>
-                  <div className="text-xs text-[#A3A3A3] font-sans leading-relaxed">
-                    {cat.skills.join(" / ")}
+                  <div className="text-xs text-zinc-400 font-sans leading-relaxed">
+                    {cat.skills.join(", ")}
                   </div>
                 </div>
               ))}
@@ -312,46 +328,43 @@ export default function App() {
             <div className="space-y-16">
               {[
                 {
-                  num: "01",
                   title: "Vidyut — Energy Analytics Platform",
                   problem: "Energy consumption data is scattered, unstructured, and not used efficiently — leading to wastage and poor optimization across facilities.",
                   solution: "A cloud-based analytics platform that collects smart meter data, applies ML models, and provides actionable insights to optimize energy usage and cut costs.",
-                  chips: ["Python", "ML", "AWS", "React", "Smart Meters"],
+                  tech: "Python / ML / AWS / React / Smart Meters",
                   status: "Completed",
                   meta: "Cloud · ML · Analytics"
                 },
                 {
-                  num: "02",
-                  title: "Garuda — Soldier Monitoring System",
-                  problem: "Lack of real-time monitoring and response in critical defense/emergency environments — causing delayed action and risk to human lives.",
-                  solution: "An intelligent system that tracks soldier vitals and location in real time, enabling faster decision-making and improving safety in high-risk scenarios.",
-                  chips: ["IoT", "Real-time", "Node.js", "Maps API", "Alerts"],
+                  title: "CanisSense",
+                  problem: "Rising safety concerns in urban Indian environments due to unpredictable street dog behaviors and lack of real-time warning systems.",
+                  solution: "AI-powered street dog threat prediction system using computer vision (OpenCV) to analyze dog behavior patterns and predict aggression risk in real time — built to support public safety in urban Indian environments.",
+                  tech: "OpenCV / Computer Vision / Python / AI / Real-time",
                   status: "Ongoing",
-                  meta: "Real-time · Defense · Safety"
+                  meta: "AI · Computer Vision · Safety"
                 },
                 {
-                  num: "03",
-                  title: "Genesis Cloud — CI/CD Kubernetes Monitoring System",
-                  problem: "Manual deployments break things. No visibility into what's running, what's broken, and why the pod crashed at 3am on a Friday.",
-                  solution: "End-to-end CI/CD pipeline with Docker containerization, Kubernetes orchestration, and full observability through Prometheus + Grafana dashboards.",
-                  chips: ["Docker", "Kubernetes", "Prometheus", "Grafana", "CI/CD"],
+                  title: "Moola (ಮೂಲ)",
+                  problem: "Word origins and cultural connections in the Kannada language are difficult to trace and visualize interactively.",
+                  solution: "A Kannada visual etymology explorer that traces word origins and meanings through an interactive interface. Built with React, D3.js for visualization, FastAPI backend, MongoDB Atlas, and the Gemini API for language processing — entirely on free-tier infrastructure.",
+                  tech: "React / D3.js / FastAPI / MongoDB Atlas / Gemini API",
                   status: "Ongoing",
-                  meta: "DevOps · Infra · Monitoring"
+                  meta: "NLP · Visualization · Linguistics"
                 }
               ].map((p) => (
-                <div key={p.num} className="space-y-4">
-                  <div className="flex justify-between items-baseline border-b border-zinc-900 pb-2">
-                    <h3 className="text-sm font-medium text-white">{p.title}</h3>
-                    <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">{p.status}</span>
+                <div key={p.title} className="space-y-4">
+                  <div className="flex justify-between items-baseline pb-2">
+                    <h3 className="text-sm font-medium text-white font-sans">{p.title}</h3>
+                    <span className="font-sans text-[10px] text-zinc-500 uppercase tracking-widest">{p.status}</span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-2 md:gap-4 text-xs leading-relaxed">
-                    <div className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">{p.meta}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-2 md:gap-4 text-xs leading-relaxed font-sans">
+                    <div className="font-sans text-[10px] text-zinc-500 uppercase tracking-wider">{p.meta}</div>
                     <div className="space-y-3 text-zinc-400">
-                      <p><span className="text-zinc-200 font-medium">Problem:</span> {p.problem}</p>
-                      <p><span className="text-zinc-200 font-medium">Solution:</span> {p.solution}</p>
-                      <p className="text-zinc-500 font-mono text-[10px] tracking-wide pt-1">
-                        {p.chips.join(" / ")}
+                      <p><span className="text-zinc-200 font-medium font-sans">Problem:</span> {p.problem}</p>
+                      <p><span className="text-zinc-200 font-medium font-sans">Solution:</span> {p.solution}</p>
+                      <p className="text-gray-400 font-sans text-xs tracking-wide pt-1">
+                        {p.tech}
                       </p>
                     </div>
                   </div>
@@ -368,14 +381,14 @@ export default function App() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-baseline">
-                <h3 className="text-sm font-medium text-white">HUDL</h3>
-                <span className="font-mono text-[10px] text-zinc-500">2023 – 2024</span>
+                <h3 className="text-sm font-medium text-white font-sans">HUDL</h3>
+                <span className="font-sans text-[10px] text-zinc-500">2023 – 2024</span>
               </div>
-              <div className="flex justify-between text-[10px] text-zinc-500 font-mono uppercase tracking-wider">
+              <div className="flex justify-between text-[10px] text-zinc-500 font-sans uppercase tracking-wider">
                 <span>Sports Data Analyst · Internship</span>
-                <span>📍 Remote · India</span>
+                <span>Remote, India</span>
               </div>
-              <ul className="space-y-2 text-xs text-zinc-400 pt-3 list-none">
+              <ul className="space-y-2 text-xs text-zinc-400 pt-3 list-none pl-0">
                 {[
                   "Analyzed player and team performance data using sports analytics tools and video analysis platforms",
                   "Tagged and reviewed match footage to extract key performance metrics",
@@ -400,12 +413,12 @@ export default function App() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-baseline">
-                <h3 className="text-sm font-medium text-white">BMS Institute of Technology</h3>
-                <span className="font-mono text-[10px] text-zinc-500">Nov 2025 – 2027</span>
+                <h3 className="text-sm font-medium text-white font-sans">BMS Institute of Technology</h3>
+                <span className="font-sans text-[10px] text-zinc-500">Nov 2025 – 2027</span>
               </div>
-              <div className="flex justify-between text-[10px] text-zinc-500 font-mono uppercase tracking-wider">
+              <div className="flex justify-between text-[10px] text-zinc-500 font-sans uppercase tracking-wider">
                 <span>Master of Computer Applications (MCA)</span>
-                <span>📍 Bengaluru, Karnataka</span>
+                <span>Bengaluru, Karnataka</span>
               </div>
             </div>
           </section>
@@ -416,8 +429,8 @@ export default function App() {
           <section id="github" className="space-y-6">
             <h2 className="font-serif italic text-base text-zinc-400">github.</h2>
 
-            <div className="space-y-4 text-xs">
-              <div className="font-mono text-[10px] text-zinc-500">
+            <div className="space-y-4 text-xs font-sans">
+              <div className="text-[10px] text-zinc-500 font-sans">
                 Srivatsarajeev · <a href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors underline">github.com/Srivatsarajeev</a>
               </div>
 
@@ -435,7 +448,7 @@ export default function App() {
                         else if (factor > 0.78) levelClass = "bg-zinc-600"; // level 3
                         else if (factor > 0.65) levelClass = "bg-zinc-700"; // level 2
                         else if (factor > 0.50) levelClass = "bg-zinc-800"; // level 1
-                        return <div key={dIdx} className={`w-[9px] h-[9px] rounded-[1px] ${levelClass}`} />;
+                        return <div key={dIdx} className={`w-[9px] h-[9px] ${levelClass}`} />;
                       })}
                     </div>
                   ))}
@@ -443,7 +456,7 @@ export default function App() {
               </div>
 
               <p className="text-[11px] text-zinc-500 leading-relaxed font-sans pt-1">
-                Live heatmap powered by the GitHub contributions API via <a href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors underline">github.com/Srivatsarajeev</a>.
+                Live heatmap powered by the GitHub contributions API via <a href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors underline font-sans">github.com/Srivatsarajeev</a>.
               </p>
             </div>
           </section>
@@ -459,9 +472,9 @@ export default function App() {
                 href="https://open.spotify.com/track/7MXVkk9YMctZqd1Srtv4MB" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center gap-4 p-4 border border-zinc-900 bg-zinc-950/40 rounded hover:border-zinc-800 transition-colors w-full sm:w-auto flex-shrink-0"
+                className="flex items-center gap-4 transition-opacity hover:opacity-80 w-full sm:w-auto flex-shrink-0"
               >
-                <div className="w-14 h-14 rounded overflow-hidden bg-zinc-900 flex-shrink-0">
+                <div className="w-14 h-14 overflow-hidden bg-zinc-900 flex-shrink-0">
                   <img 
                     src="https://i.scdn.co/image/ab67616d0000b2734718e2b124f79258be7bc452" 
                     alt="Starboy Album Cover"
@@ -469,64 +482,16 @@ export default function App() {
                   />
                 </div>
                 
-                <div className="space-y-0.5 pr-6">
-                  <span className="text-[9px] uppercase tracking-wider font-mono text-zinc-500 font-bold">Favourite Track</span>
-                  <h4 className="text-xs font-bold text-white leading-tight">Starboy</h4>
-                  <p className="text-[10px] text-zinc-500">The Weeknd ft. Daft Punk</p>
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium font-sans block">Favourite Track</span>
+                  <h4 className="text-xs font-semibold text-white leading-none font-sans">Starboy</h4>
+                  <p className="text-[11px] text-zinc-400 font-sans">The Weeknd ft. Daft Punk</p>
                 </div>
               </a>
               
               <div className="text-xs text-zinc-500 leading-relaxed font-sans">
                 <h5 className="font-serif italic text-zinc-400 text-xs mb-1">This plays at every deploy.</h5>
                 <p>Click to open on Spotify. Green checkmark in CI + Starboy playing = life is genuinely good.</p>
-              </div>
-            </div>
-          </section>
-        </ScrollReveal>
-
-        {/* ── WRITING ── */}
-        <ScrollReveal>
-          <section id="writing" className="space-y-6">
-            <h2 className="font-serif italic text-base text-zinc-400">writing.</h2>
-
-            <div className="space-y-2">
-              <p className="text-xs font-serif italic text-zinc-500">Thoughts from a sleep-deprived engineer. No clickbait. Mostly.</p>
-              
-              <div className="grid grid-cols-1 gap-6 pt-4">
-                {[
-                  {
-                    meta: "DevOps · 8 min read",
-                    title: "Why Your CI/CD Pipeline Is Lying To You",
-                    desc: "That green checkmark doesn't mean what you think. A dive into false confidence in automated pipelines.",
-                    link: "#"
-                  },
-                  {
-                    meta: "ML · 12 min read",
-                    title: "Training a Model That Actually Works in Production",
-                    desc: "Spoiler: your Jupyter accuracy doesn't matter. Here's what actually does.",
-                    link: "#"
-                  },
-                  {
-                    meta: "Sports Data · 6 min read",
-                    title: "Sports Analytics Taught Me More Than School Did",
-                    desc: "My time at HUDL, what real sports data looks like, and why messy data is always the vibe.",
-                    link: "#"
-                  }
-                ].map((blog) => (
-                  <a 
-                    key={blog.title}
-                    href={blog.link}
-                    className="group block space-y-1"
-                  >
-                    <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">{blog.meta}</div>
-                    <h4 className="text-sm font-medium text-white group-hover:text-zinc-300 transition-colors">
-                      {blog.title}
-                    </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
-                      {blog.desc}
-                    </p>
-                  </a>
-                ))}
               </div>
             </div>
           </section>
@@ -550,7 +515,7 @@ export default function App() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="aspect-square bg-zinc-900 rounded overflow-hidden"
+                      className="aspect-square bg-zinc-900 overflow-hidden"
                     >
                       <img 
                         src={img} 
@@ -569,9 +534,9 @@ export default function App() {
               <div className="pt-2">
                 <button 
                   onClick={() => setShowAllPhotos(!showAllPhotos)}
-                  className="font-mono text-[10px] uppercase tracking-wider text-zinc-400 hover:text-white transition-colors focus:outline-none"
+                  className="font-sans text-[10px] uppercase tracking-wider text-zinc-400 hover:text-white transition-colors focus:outline-none"
                 >
-                  [{showAllPhotos ? "show less" : "view more"}]
+                  {showAllPhotos ? "show less" : "view more"}
                 </button>
               </div>
             </div>
@@ -585,28 +550,24 @@ export default function App() {
 
             <div className="flex flex-col sm:flex-row gap-6 items-baseline justify-between">
               <div className="space-y-1">
-                <div className="text-4xl font-mono tracking-tighter text-white select-none">
+                <div className="text-4xl font-sans font-semibold tracking-tighter text-white select-none">
                   {visitDisplayCount.toLocaleString("en-IN")}
                 </div>
-                <div className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase">Profile Visits</div>
+                <div className="text-[10px] font-sans tracking-widest text-zinc-500 uppercase">Profile Visits</div>
               </div>
 
               <div className="flex-1 sm:pl-8 space-y-4 text-xs text-zinc-400">
                 <div>
                   <h4 className="font-serif italic text-zinc-300 text-sm mb-1">You're not alone in being nosy.</h4>
-                  <p>Every visit counts — literally. This ticks up each time someone lands here. Welcome to the club.</p>
+                  <p className="font-sans">Every visit counts — literally. This ticks up each time someone lands here. Welcome to the club.</p>
                 </div>
                 
-                <div className="flex flex-wrap gap-2 pt-1 font-mono text-[9px]">
-                  <div className="text-zinc-500 border border-zinc-900 px-2 py-0.5 rounded">
-                    🎂 Born 14 May 2003
-                  </div>
-                  <div className="text-zinc-500 border border-zinc-900 px-2 py-0.5 rounded">
-                    {daysAlive.toLocaleString("en-IN")} days alive
-                  </div>
-                  <div className="text-zinc-500 border border-zinc-900 px-2 py-0.5 rounded">
-                    Next bday in {nextBdayDays} days
-                  </div>
+                <div className="text-zinc-500 text-xs sm:text-[13px] font-sans flex flex-wrap items-center gap-2 pt-1">
+                  <span>Born 14 May 2003</span>
+                  <span>—</span>
+                  <span>{daysAlive.toLocaleString("en-IN")} days alive</span>
+                  <span>—</span>
+                  <span>Next birthday in {nextBdayDays} days</span>
                 </div>
               </div>
             </div>
@@ -619,27 +580,87 @@ export default function App() {
             <h2 className="font-serif italic text-base text-zinc-400">contact.</h2>
 
             <div className="space-y-6">
-              <h3 className="text-3xl font-medium tracking-tight text-white leading-none">
+              <h3 className="text-3xl font-medium tracking-tight text-white leading-none font-sans">
                 Let's build something.
               </h3>
 
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] tracking-widest uppercase font-mono">
+              <div className="flex gap-6 items-center pt-2">
                 {[
-                  { label: "Email", href: "mailto:rajeevsrivatsa7@gmail.com" },
-                  { label: "GitHub", href: "https://github.com/Srivatsarajeev" },
-                  { label: "LinkedIn", href: "https://www.linkedin.com/in/rajeev-srivatsa-456a751a5" },
-                  { label: "Instagram", href: "https://www.instagram.com/r_srivatsaa?igsh=MXRtend3ZW9rdGxjbQ==" },
-                  { label: "Letterboxd", href: "https://boxd.it/7jSIX" },
-                  { label: "Spotify", href: "https://open.spotify.com/track/7MXVkk9YMctZqd1Srtv4MB" }
+                  { 
+                    label: "Email", 
+                    href: "mailto:rajeevsrivatsa7@gmail.com",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="20" height="16" x="2" y="4" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                      </svg>
+                    )
+                  },
+                  { 
+                    label: "GitHub", 
+                    href: "https://github.com/Srivatsarajeev",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+                        <path d="M9 18c-4.51 2-5-2-7-2"/>
+                      </svg>
+                    )
+                  },
+                  { 
+                    label: "LinkedIn", 
+                    href: "https://www.linkedin.com/in/rajeev-srivatsa-456a751a5",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                        <rect width="4" height="12" x="2" y="9"/>
+                        <circle cx="4" cy="4" r="2"/>
+                      </svg>
+                    )
+                  },
+                  { 
+                    label: "Instagram", 
+                    href: "https://www.instagram.com/r_srivatsaa?igsh=MXRtend3ZW9rdGxjbQ==",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                      </svg>
+                    )
+                  },
+                  { 
+                    label: "Letterboxd", 
+                    href: "https://boxd.it/7jSIX",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <circle cx="7" cy="12" r="3.5" />
+                        <circle cx="12" cy="12" r="3.5" />
+                        <circle cx="17" cy="12" r="3.5" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    label: "Spotify", 
+                    href: "https://open.spotify.com/track/7MXVkk9YMctZqd1Srtv4MB",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M8 14.5c2.5-1 5.5-1 8 0"/>
+                        <path d="M7 11.5c3-1.5 7-1.5 10 0"/>
+                        <path d="M6 8.5c4-2 8-2 12 0"/>
+                      </svg>
+                    )
+                  }
                 ].map((soc) => (
                   <a 
                     key={soc.label}
                     href={soc.href}
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-white transition-colors"
+                    className="text-zinc-500 hover:text-white transition-opacity hover:opacity-80"
+                    title={soc.label}
                   >
-                    {soc.label}
+                    {soc.icon}
                   </a>
                 ))}
               </div>
@@ -648,7 +669,7 @@ export default function App() {
         </ScrollReveal>
 
         {/* ── FOOTER ── */}
-        <footer className="w-full pt-12 border-t border-zinc-900 text-[10px] tracking-wide text-zinc-500 font-mono flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <footer className="w-full pt-12 text-[10px] tracking-wide text-zinc-500 font-sans flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <span>© 2026 Rajeev M · Bengaluru · rajeevsrivatsa7@gmail.com</span>
           <span className="opacity-80">MCA @ BMSIT · DevOps · ML · MERN</span>
         </footer>
