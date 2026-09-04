@@ -327,7 +327,7 @@ export default function App() {
         <ScrollReveal>
           <section className="relative w-full rounded-2xl overflow-hidden border border-zinc-800/60 bg-[#0A0A0A] shadow-2xl">
             {/* Wide Header Banner Image */}
-            <div className="relative w-full aspect-[2.7/1] sm:aspect-[3/1] overflow-hidden bg-zinc-950">
+             <div className="relative w-full aspect-[2.2/1] sm:aspect-[2.7/1] md:aspect-[3/1] overflow-hidden bg-zinc-950">
               <img 
                 src="/hampi.jpg" 
                 alt="Rajeev Srivatsa Header Banner" 
@@ -340,10 +340,9 @@ export default function App() {
 
             {/* Profile Header Content (Overlapping PFP + Metadata) */}
             <div className="relative px-4 sm:px-6 pb-6">
-              {/* Overlapping Circular PFP Row */}
-              <div className="flex justify-between items-end -mt-14 sm:-mt-18 md:-mt-20 mb-4 z-20 relative">
+              <div className="flex justify-between items-end -mt-12 sm:-mt-14 md:-mt-16 mb-4 z-20 relative">
                 <motion.div 
-                  className="w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 rounded-full border-4 border-[#0A0A0A] overflow-hidden bg-zinc-900 flex-shrink-0 ring-2 ring-zinc-800/80 shadow-2xl z-30"
+                  className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full border-4 border-[#0A0A0A] overflow-hidden bg-zinc-900 flex-shrink-0 ring-2 ring-zinc-800/80 shadow-2xl z-30"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={!isPreloading ? { scale: 1, opacity: 1 } : {}}
                   transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
@@ -366,10 +365,10 @@ export default function App() {
                 </motion.div>
 
                 {/* X-Style Action Buttons */}
-                <div className="flex gap-2 sm:gap-3 text-xs font-sans pb-1 z-20">
+                <div className="flex flex-wrap gap-2 sm:gap-3 text-[11px] sm:text-xs font-sans pb-1 z-20">
                   <a 
                     href="mailto:rajeevsrivatsa7@gmail.com" 
-                    className="px-4 py-1.5 rounded-full bg-zinc-100 hover:bg-white text-black font-semibold text-xs transition-all duration-200 shadow"
+                    className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-zinc-100 hover:bg-white text-black font-semibold text-[11px] sm:text-xs transition-all duration-200 shadow"
                   >
                     Email Me
                   </a>
@@ -377,7 +376,7 @@ export default function App() {
                     href="https://github.com/Srivatsarajeev" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="px-4 py-1.5 rounded-full border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-200 font-medium text-xs transition-all duration-200"
+                    className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-200 font-medium text-[11px] sm:text-xs transition-all duration-200"
                   >
                     GitHub ↗
                   </a>
