@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Hardcoded photos list mapping exactly to the public/photos folder to prevent 404s
+// Hardcoded photos list mapping exactly to the public/photos folder
 const PHOTOS_LIST = [
   "1.jpg.jpg", "2.jpg.jpg", "3.jpg.jpg", "4.jpg.jpg", "5.jpg.jpg", "6,jpg.jpg",
   "7.jpg.jpg", "8.jpg.jpg", "9.jpg.jpg", "10,jpg.jpg", "11.jpg.jpg", "12.jpg.jpg",
@@ -104,65 +104,42 @@ function UnderlineLink({ href, children, target, rel, className = "" }: { href: 
   );
 }
 
-// Preloader Component
+// Minimal Editorial Preloader Component
 function Preloader({ onComplete }: { onComplete: () => void }) {
   const [index, setIndex] = useState(0);
-  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     if (index < LANGUAGES.length - 1) {
       const timer = setTimeout(() => {
         setIndex((prev) => prev + 1);
-      }, 400);
+      }, 300);
       return () => clearTimeout(timer);
     } else {
       const timer = setTimeout(() => {
-        setShowWelcome(true);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [index]);
-
-  useEffect(() => {
-    if (showWelcome) {
-      const timer = setTimeout(() => {
         onComplete();
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
-  }, [showWelcome, onComplete]);
+  }, [index, onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 bg-[#000000] z-50 flex items-center justify-center text-white"
+      className="fixed inset-0 bg-black z-50 flex items-center justify-center text-white overflow-hidden"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <AnimatePresence mode="wait">
-        {!showWelcome ? (
-          <motion.div
-            key={`lang-${index}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.15, ease: [0.25, 1, 0.5, 1] }}
-            className="text-2xl sm:text-3xl font-medium tracking-tight font-sans text-center"
-          >
-            {LANGUAGES[index]}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="welcome"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
-            className="text-2xl sm:text-3xl font-medium tracking-tight font-sans text-center text-zinc-100"
-          >
-            welcome to vatsa world
-          </motion.div>
-        )}
+        <motion.div
+          key={`lang-${index}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="text-2xl sm:text-3xl font-display uppercase tracking-[0.3em] font-medium text-center text-zinc-300 select-none z-10"
+        >
+          {LANGUAGES[index]}
+        </motion.div>
       </AnimatePresence>
     </motion.div>
   );
@@ -338,14 +315,6 @@ export default function App() {
           <span className="text-zinc-800">•</span>
           <LiveClock />
         </div>
-
-        <div className="absolute bottom-3 left-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
-          <span>System Status: Active</span>
-        </div>
-
-        <div className="absolute bottom-3 right-4 hidden md:flex items-center gap-2 text-[9px] tracking-[0.2em] text-zinc-600 font-sans uppercase">
-          <span>Portfolio V1.0</span>
-        </div>
       </div>
 
       {/* ── BACKGROUND LAYOUT GUIDES ── */}
@@ -354,57 +323,91 @@ export default function App() {
       </div>
 
       <div className="max-w-2xl mx-auto px-6 py-24 space-y-24">
-        
-        {/* ── HERO SECTION ── */}
+        {/* ── HERO SECTION (X / TWITTER PROFILE LAYOUT) ── */}
         <ScrollReveal>
-          <section className="space-y-8">
-            <div className="flex flex-col sm:flex-row gap-8 items-start">
-              <motion.div 
-                className="w-24 h-32 flex-shrink-0 bg-zinc-900 overflow-hidden"
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={!isPreloading ? { scale: 1, opacity: 1 } : {}}
-                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
-              >
-                <img 
-                  src="/profile.jpg" 
-                  alt="Rajeev Srivatsa" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                    const parent = e.currentTarget.parentElement;
-                    if (parent) {
-                      const fallback = document.createElement("div");
-                      fallback.className = "w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-600 text-[10px] text-center p-2 uppercase tracking-widest font-sans";
-                      fallback.textContent = "Rajeev Srivatsa";
-                      parent.appendChild(fallback);
-                    }
-                  }}
-                />
-              </motion.div>
-              
-              <div className="space-y-4 flex-1">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-medium tracking-tight text-white font-sans">
+          <section className="relative w-full rounded-2xl overflow-hidden border border-zinc-800/60 bg-[#0A0A0A] shadow-2xl">
+            {/* Wide Header Banner Image */}
+            <div className="relative w-full aspect-[2.7/1] sm:aspect-[3/1] overflow-hidden bg-zinc-950">
+              <img 
+                src="/hampi.jpg" 
+                alt="Rajeev Srivatsa Header Banner" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "https://images.unsplash.com/photo-1627894006066-b457865371f2?w=1600&auto=format&fit=crop&q=80";
+                }}
+              />
+            </div>
+
+            {/* Profile Header Content (Overlapping PFP + Metadata) */}
+            <div className="relative px-4 sm:px-6 pb-6">
+              {/* Overlapping Circular PFP Row */}
+              <div className="flex justify-between items-end -mt-14 sm:-mt-18 md:-mt-20 mb-4 z-20 relative">
+                <motion.div 
+                  className="w-28 h-28 sm:w-34 sm:h-34 md:w-38 md:h-38 rounded-full border-4 border-[#0A0A0A] overflow-hidden bg-zinc-900 flex-shrink-0 ring-2 ring-zinc-800/80 shadow-2xl z-30"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={!isPreloading ? { scale: 1, opacity: 1 } : {}}
+                  transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
+                >
+                  <img 
+                    src="/profile.jpg" 
+                    alt="Rajeev Srivatsa" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        const fallback = document.createElement("div");
+                        fallback.className = "w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-400 text-[11px] text-center p-2 uppercase tracking-widest font-sans font-medium";
+                        fallback.textContent = "Rajeev Srivatsa";
+                        parent.appendChild(fallback);
+                      }
+                    }}
+                  />
+                </motion.div>
+
+                {/* X-Style Action Buttons */}
+                <div className="flex gap-2 sm:gap-3 text-xs font-sans pb-1 z-20">
+                  <a 
+                    href="mailto:rajeevsrivatsa7@gmail.com" 
+                    className="px-4 py-1.5 rounded-full bg-zinc-100 hover:bg-white text-black font-semibold text-xs transition-all duration-200 shadow"
+                  >
+                    Email Me
+                  </a>
+                  <a 
+                    href="https://github.com/Srivatsarajeev" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="px-4 py-1.5 rounded-full border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-200 font-medium text-xs transition-all duration-200"
+                  >
+                    GitHub ↗
+                  </a>
+                </div>
+              </div>
+
+              {/* Bio & Details Below Overlapping PFP */}
+              <div className="space-y-3.5 pt-1">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
                     Rajeev Srivatsa
                   </h1>
-                  <p className="text-xs font-serif italic text-zinc-500 tracking-wide">
-                    DevOps · ML · Full-Stack · occasional photographer
+                  <p className="text-xs text-zinc-500 font-mono">
+                    @rajeevsrivatsa
                   </p>
                 </div>
+
+                <p className="text-xs font-serif italic text-amber-400/90 tracking-wide font-medium">
+                  DevOps · ML · Full-Stack · occasional photographer
+                </p>
                 
-                <p className="text-zinc-400 text-xs sm:text-[13px] leading-relaxed font-sans">
+                <p className="text-zinc-300 text-xs sm:text-[13px] leading-relaxed font-sans">
                   I make servers not cry, models actually learn, and UIs not look like 2009. Currently doing MCA at BMS Institute of Technology. Former Sports Data Analyst at HUDL. Part-time YAML poet, full-time infrastructure overthinker.
                 </p>
                 
-                <div className="flex flex-wrap gap-4 text-[10px] tracking-widest font-sans uppercase">
-                  <UnderlineLink href="#projects" className="text-zinc-500 hover:text-white transition-colors">
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] text-zinc-400 font-sans pt-1">
+                  <span className="flex items-center gap-1">📍 Bengaluru, India</span>
+                  <span className="flex items-center gap-1">🎓 MCA @ BMSIT</span>
+                  <UnderlineLink href="#projects" className="text-amber-400/90 hover:text-amber-300 font-medium">
                     View Projects ↓
-                  </UnderlineLink>
-                  <UnderlineLink href="mailto:rajeevsrivatsa7@gmail.com" className="text-zinc-500 hover:text-white transition-colors">
-                    Email Me →
-                  </UnderlineLink>
-                  <UnderlineLink href="https://github.com/Srivatsarajeev" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors">
-                    GitHub ↗
                   </UnderlineLink>
                 </div>
               </div>
@@ -798,18 +801,18 @@ export default function App() {
                       </svg>
                     )
                   }
-                ].map((soc) => (
-                  <motion.a 
-                    key={soc.label}
-                    href={soc.href}
-                    target="_blank" 
+                ].map((item) => (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-zinc-500 hover:text-white"
-                    title={soc.label}
+                    title={item.label}
                     whileHover={{ scale: 1.1, y: -2 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    {soc.icon}
+                    {item.icon}
                   </motion.a>
                 ))}
               </div>
@@ -822,7 +825,6 @@ export default function App() {
           <span>© 2026 Rajeev M · Bengaluru · rajeevsrivatsa7@gmail.com</span>
           <span className="opacity-80">MCA @ BMSIT · DevOps · ML · MERN</span>
         </footer>
-
       </div>
     </PreloadContext.Provider>
   );

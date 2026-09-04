@@ -12,7 +12,12 @@ export default {
         orangeCustom: "#ff5c35",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Outfit", "Inter", "sans-serif"],
+        display: ["Black Ops One", "Saira Stencil One", "Bebas Neue", "sans-serif"],
+        stencil: ["Black Ops One", "Saira Stencil One", "sans-serif"],
+        bebas: ["Bebas Neue", "sans-serif"],
+        teko: ["Teko", "sans-serif"],
+        syne: ["Syne", "sans-serif"],
         serif: ["Libre Baskerville", "serif"],
         mono: ["Geist Mono", "monospace"],
       },
