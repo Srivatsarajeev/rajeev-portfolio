@@ -86,7 +86,7 @@ function App() {
         <Reveal><section id="contact" className="section-shell"><SectionTitle>contact.</SectionTitle><h2 className="text-4xl font-medium tracking-tight text-white sm:text-6xl">Let's build something.</h2><div className="mt-8 flex flex-wrap gap-3"><a className="rounded-full bg-amber-300 px-5 py-3 text-xs font-semibold text-black transition hover:bg-white" href="mailto:rajeevsrivatsa7@gmail.com">Email Rajeev</a><a className="rounded-full border border-white/20 px-5 py-3 text-xs text-white transition hover:border-amber-300 hover:text-amber-300" href="https://www.linkedin.com/in/rajeev-srivatsa-456a751a5" target="_blank" rel="noreferrer">LinkedIn ↗</a></div></section></Reveal>
       </div>
 
-      <footer className="border-t border-white/10 py-8 text-center text-[10px] uppercase tracking-widest text-zinc-600 sm:flex sm:justify-between"><span>© {new Date().getFullYear()} Rajeev Srivatsa</span><span>Bengaluru · DevOps · ML · MERN</span></footer>
+      <footer className="flex flex-col gap-2 border-t border-white/10 py-8 text-center text-[10px] uppercase tracking-widest text-zinc-600 sm:flex-row sm:justify-between"><span>© {new Date().getFullYear()} Rajeev Srivatsa</span><span>Bengaluru · DevOps · ML · MERN</span></footer>
     </main>
   );
 }
